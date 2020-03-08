@@ -1,0 +1,17 @@
+﻿  main.cpp
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(16,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(125,90): warning C4244: 'argument': conversion from 'double' to 'const unsigned int', possible loss of data
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message : while compiling class template member function 'void ExpandableHashMap<std::string,double>::associate(const KeyType &,const ValueType &)'
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message :         with
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message :         [
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message :             KeyType=std::string,
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message :             ValueType=double
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message :         ]
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(23): message : see reference to function template instantiation 'void ExpandableHashMap<std::string,double>::associate(const KeyType &,const ValueType &)' being compiled
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(23): message :         with
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(23): message :         [
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(23): message :             KeyType=std::string,
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(23): message :             ValueType=double
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(23): message :         ]
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(19): message : see reference to class template instantiation 'ExpandableHashMap<std::string,double>' being compiled
+  Project4_Draft2.vcxproj -> C:\Users\Solomon Lo\source\repos\Project4_Draft2\Debug\Project4_Draft2.exe
