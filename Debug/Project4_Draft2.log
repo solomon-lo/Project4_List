@@ -1,17 +1,26 @@
-﻿  main.cpp
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(16,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
+﻿  StreetMap.cpp
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(114,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(119,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(128,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(200,20): warning C4018: '<': signed/unsigned mismatch
 C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(125,90): warning C4244: 'argument': conversion from 'double' to 'const unsigned int', possible loss of data
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message : while compiling class template member function 'void ExpandableHashMap<std::string,double>::associate(const KeyType &,const ValueType &)'
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message : while compiling class template member function 'void ExpandableHashMap<GeoCoord,std::vector<StreetSegment,std::allocator<_Ty>>>::associate(const KeyType &,const ValueType &)'
 C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message :         with
 C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message :         [
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message :             KeyType=std::string,
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message :             ValueType=double
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message :             _Ty=StreetSegment,
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message :             KeyType=GeoCoord,
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message :             ValueType=std::vector<StreetSegment,std::allocator<StreetSegment>>
 C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(119): message :         ]
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(23): message : see reference to function template instantiation 'void ExpandableHashMap<std::string,double>::associate(const KeyType &,const ValueType &)' being compiled
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(23): message :         with
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(23): message :         [
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(23): message :             KeyType=std::string,
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(23): message :             ValueType=double
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(23): message :         ]
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\main.cpp(19): message : see reference to class template instantiation 'ExpandableHashMap<std::string,double>' being compiled
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(136): message : see reference to function template instantiation 'void ExpandableHashMap<GeoCoord,std::vector<StreetSegment,std::allocator<_Ty>>>::associate(const KeyType &,const ValueType &)' being compiled
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(136): message :         with
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(136): message :         [
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(136): message :             _Ty=StreetSegment,
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(136): message :             KeyType=GeoCoord,
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(136): message :             ValueType=std::vector<StreetSegment,std::allocator<StreetSegment>>
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(136): message :         ]
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(28): message : see reference to class template instantiation 'ExpandableHashMap<GeoCoord,std::vector<StreetSegment,std::allocator<_Ty>>>' being compiled
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(28): message :         with
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(28): message :         [
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(28): message :             _Ty=StreetSegment
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(28): message :         ]
   Project4_Draft2.vcxproj -> C:\Users\Solomon Lo\source\repos\Project4_Draft2\Debug\Project4_Draft2.exe
