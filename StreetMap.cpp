@@ -136,7 +136,7 @@ bool StreetMapImpl::load(string mapFile)
 				if (vectorOfReversedStreetSegments[j].start == vectorOfGeoCoords[i])
 				{
 					StreetSegmentsToAssociate.push_back(vectorOfReversedStreetSegments[j]);
-				}
+				}	//MAYBE COMBINE THIS WITH THE EARLIER FOR LOOP AND DO .END INSTEAD
 			}
 
 			GeoCoordToStreetSegmentHashMap.associate(vectorOfGeoCoords[i], StreetSegmentsToAssociate);
@@ -202,9 +202,9 @@ bool StreetMap::getSegmentsThatStartWith(const GeoCoord& gc, vector<StreetSegmen
 int main()
 {
 	StreetMapImpl thing;
-	thing.load("short.txt");
+	thing.load("mapdata.txt");
 	//GeoCoord endGeoCoord("34.0382807", "-118.4884756");	//runs properly
-	GeoCoord endGeoCoord("34.0406852", "-118.4912844");		//bad run
+	GeoCoord endGeoCoord("34.0390561", "-118.4867356");		//bad run
 	cerr << endGeoCoord.latitudeText << endl;
 	cerr << endGeoCoord.longitudeText << endl;
 	vector<StreetSegment> firstTest;
