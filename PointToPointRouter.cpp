@@ -42,14 +42,14 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 	vector<StreetSegment> FirstPlaceholderVectorForTesting;
 	
 	m_map->getSegmentsThatStartWith(start, FirstPlaceholderVectorForTesting);
-	if (FirstPlaceholderVectorForTesting.empty == true)
+	if (FirstPlaceholderVectorForTesting.empty() == true)
 	{
 		return BAD_COORD;
 	}
 	
 	vector<StreetSegment> SecondPlaceholderVectorForTesting;
 	m_map->getSegmentsThatStartWith(end, SecondPlaceholderVectorForTesting);
-	if (SecondPlaceholderVectorForTesting.empty == true)
+	if (SecondPlaceholderVectorForTesting.empty() == true)
 	{
 		return BAD_COORD;
 	}
@@ -58,7 +58,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 	{
 		totalDistanceTravelled = 0.00;
 		route.clear();
-		return;
+		return DELIVERY_SUCCESS;
 	}
 
 	vector<Node> openList;

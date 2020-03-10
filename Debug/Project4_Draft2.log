@@ -1,4 +1,10 @@
-﻿  StreetMap.cpp
+﻿  PointToPointRouter.cpp
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(81,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(89,26): warning C4244: 'argument': conversion from 'double' to 'const unsigned int', possible loss of data
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(110,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(141,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(188,42): warning C4018: '<': signed/unsigned mismatch
+  StreetMap.cpp
 C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(116,21): warning C4018: '<': signed/unsigned mismatch
 C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(121,22): warning C4018: '<': signed/unsigned mismatch
 C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\StreetMap.cpp(134,22): warning C4018: '<': signed/unsigned mismatch
