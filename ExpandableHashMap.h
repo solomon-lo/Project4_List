@@ -58,6 +58,14 @@ private:
 		return h % vectorOfLists.size();
 	}
 
+	unsigned int getModifiedBucketNumber(const KeyType& key, int modifiedSize) const
+	{
+
+		unsigned int hasher(const KeyType & k); // prototype
+		unsigned int h = hasher(key);
+		return h % modifiedSize;
+	}
+
 };
 
 
@@ -133,7 +141,10 @@ void ExpandableHashMap<KeyType, ValueType>::associate(const KeyType& key, const 
 					for (auto j = listToCopyOver.begin(); j != listToCopyOver.end(); j++)
 					{
 						//unsigned int getBucketNumber(const KeyType & k) const;
-						unsigned int tempHash = getBucketNumber(j->first);
+
+
+
+						unsigned int tempHash = getModifiedBucketNumber(j->first, newHashVector.size());
 						newHashVector[tempHash].emplace_back(j->first, j->second);
 					}
 				}
@@ -166,6 +177,8 @@ const ValueType* ExpandableHashMap<KeyType, ValueType>::find(const KeyType& key)
 	{
 		for (auto it = vectorOfLists[findIndex].begin(); it != vectorOfLists[findIndex].end(); it++)
 		{
+			//TODO: DO WE NEED TO ITERATE THROUGH THE ELEMENTS IN IT TO FIND IF THERE IS A PAIR?
+			//OR IS THIS ONE ACCESS ENOUGH?
 			if ((*it).first == key)
 			{
 				return &((*it).second);

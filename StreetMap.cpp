@@ -26,6 +26,8 @@ public:
 	bool getSegmentsThatStartWith(const GeoCoord& gc, vector<StreetSegment>& segs) const;
 private:
 	ExpandableHashMap<GeoCoord, vector<StreetSegment>> GeoCoordToStreetSegmentHashMap;
+
+
 	
 };
 
@@ -49,10 +51,10 @@ bool StreetMapImpl::load(string mapFile)
 	string s;
 	while (getline(infile, s))
 	{
+
 		vector<StreetSegment> vectorOfStreetSegments;
 		vector<StreetSegment> vectorOfReversedStreetSegments;
 		vector<GeoCoord> vectorOfGeoCoords;
-
 
 		StreetSegment tempStreetSegment;
 		StreetSegment reveresedTempStreetSegment;	//the same as tempStreetSegment, but it's actually has switched end and start coordinates
@@ -122,7 +124,10 @@ bool StreetMapImpl::load(string mapFile)
 				{
 					StreetSegmentsToAssociate.push_back(vectorOfStreetSegments[j]);
 				}
+				//maybe we need to add if the end is the same as well?
 			}
+
+			//TODO:WE CAN'T ACCESDS AN ITEM THAT'S A NODE IN THE ARRAY IF IT'S A NEXTNODE
 			//AFTER DISCU:switch where we find which ones are the same which ones are pushed back so that this is handled in the getSegmentsThatStartWith.
 			
 			//pushes reversed street segments that have a first coord the same as the GeoCoord
@@ -135,6 +140,7 @@ bool StreetMapImpl::load(string mapFile)
 			}
 
 			GeoCoordToStreetSegmentHashMap.associate(vectorOfGeoCoords[i], StreetSegmentsToAssociate);
+			
 		}
 
 	}
@@ -147,8 +153,12 @@ bool StreetMapImpl::load(string mapFile)
 bool StreetMapImpl::getSegmentsThatStartWith(const GeoCoord& gc, vector<StreetSegment>& segs) const
 {
 	//ExpandableHashMap<GeoCoord, vector<StreetSegment>> GeoCoordToStreetSegmentHashMap;
-	const vector<StreetSegment>* tempVector = GeoCoordToStreetSegmentHashMap.find(gc);
-	if (tempVector == nullptr)
+	segs = *GeoCoordToStreetSegmentHashMap.find(gc);
+	//const vector<StreetSegment>* tempVector = GeoCoordToStreetSegmentHashMap.find(gc);
+
+	return(segs.empty());
+	//TODO:EDIT THIS TO ITERATE THROUGH EVERYTHING IN THE VECTOR INSTEAD OF JUST ONE THING. so i access the list, i need to iterate through the pairs and add them to the vector
+	/*if (tempVector == nullptr)
 	{
 		cerr << "Coord not found" << endl;
 		return false;
@@ -161,7 +171,7 @@ bool StreetMapImpl::getSegmentsThatStartWith(const GeoCoord& gc, vector<StreetSe
 			segs.emplace_back(*it);
 		}
 		return true;
-	}
+	}*/
 }
 
 //******************** StreetMap functions ************************************
@@ -192,8 +202,9 @@ bool StreetMap::getSegmentsThatStartWith(const GeoCoord& gc, vector<StreetSegmen
 int main()
 {
 	StreetMapImpl thing;
-	thing.load("mapdata.txt");
-	GeoCoord endGeoCoord("34.0555267", "-118.4796954");
+	thing.load("short.txt");
+	//GeoCoord endGeoCoord("34.0382807", "-118.4884756");	//runs properly
+	GeoCoord endGeoCoord("34.0406852", "-118.4912844");		//bad run
 	cerr << endGeoCoord.latitudeText << endl;
 	cerr << endGeoCoord.longitudeText << endl;
 	vector<StreetSegment> firstTest;
@@ -208,5 +219,5 @@ int main()
 }
 
 //34.0547000 -118.4794734 34.0544590 -118.4801137
-
+//	GeoCoord endGeoCoord("34.0453190", "-118.4966977");
 //"34.0508737", "-118.4947372"
