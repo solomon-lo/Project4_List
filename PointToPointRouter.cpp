@@ -18,9 +18,9 @@ private:
 	{
 		GeoCoord m_GeoCoord;
 		Node* prevGeoCoordNode;
-		double gCost;
-		double hCost;
-		double fCost;
+		double gCost = 0;
+		double hCost = 0;
+		double fCost = 0;
 	};
 };
 
@@ -127,14 +127,75 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 				}
 				*similarToIteratorPointer = *(similarToIteratorPointer->prevGeoCoordNode);
 			}
+
+			return DELIVERY_SUCCESS;
 		}
 
-		///ended that 
+		//END OF THE IF STATEMENT
+		//Generate children
 
+		vector<StreetSegment> vectorOfPreChildrenStreetSegments;
+		vector<Node> vectorOfChildrenPreCheck;
 
-	}
+		m_map->getSegmentsThatStartWith(currentNode.m_GeoCoord, vectorOfPreChildrenStreetSegments);
+		for (int i = 0; i < vectorOfPreChildrenStreetSegments.size(); ++i)
+		{
+			Node childStartNode;
+			childStartNode.m_GeoCoord = vectorOfPreChildrenStreetSegments[i].start;
+			childStartNode.prevGeoCoordNode = &currentNode;
 
+			Node childEndNode;
+			childEndNode.m_GeoCoord = vectorOfPreChildrenStreetSegments[i].end;
+			childEndNode.prevGeoCoordNode = &currentNode;
+			vectorOfChildrenPreCheck.push_back(childStartNode);
+			vectorOfChildrenPreCheck.push_back(childEndNode);
 
+			//bool vectorOfchildrenSegmentsElementIAlreadyInClosedList = false;
+			//for (int j = 0; j < closedList.size(); ++j)
+			//{
+			//	if ((closedList[j].m_GeoCoord == vectorOfPreChildrenStreetSegments[i].start) || (closedList[j].m_GeoCoord == vectorOfPreChildrenStreetSegments[i].end))
+			//	{
+			//		vectorOfchildrenSegmentsElementIAlreadyInClosedList = true;
+			//	}
+			//}
+			//if (vectorOfchildrenSegmentsElementIAlreadyInClosedList)
+			//{
+			//	continue;
+			//}
+
+		}
+
+		//start of: for each child in the children
+		for (int z = 0; z != vectorOfChildrenPreCheck.size(); ++z)
+		{
+			bool childPreCheckFoundInClosedList = false;
+			for (int y = 0; y != closedList.size(); ++y)
+			{
+				if (closedList[y].m_GeoCoord == vectorOfChildrenPreCheck[z].m_GeoCoord)
+				{
+					childPreCheckFoundInClosedList = true;
+				}
+			}
+			if (childPreCheckFoundInClosedList)
+			{
+				continue;
+			}
+
+			vectorOfChildrenPreCheck[z].gCost = currentNode.gCost + distanceEarthMiles(vectorOfChildrenPreCheck[z].m_GeoCoord, currentNode.m_GeoCoord);
+			vectorOfChildrenPreCheck[z].hCost = distanceEarthMiles(vectorOfChildrenPreCheck[z].m_GeoCoord, end);
+			vectorOfChildrenPreCheck[z].fCost = vectorOfChildrenPreCheck[z].gCost + vectorOfChildrenPreCheck[z].gCost;
+
+			for (int openListPos = 0; openListPos < openList.size(); openListPos++)
+			{
+				if (openList[openListPos].m_GeoCoord == vectorOfChildrenPreCheck[z].m_GeoCoord && vectorOfChildrenPreCheck[z].gCost > openList[openListPos].gCost)
+				{
+					continue;
+				}
+			}
+			openList.insert(openList.begin(), vectorOfChildrenPreCheck[z]);
+
+		}
+	}	
 	return NO_ROUTE;  // Delete this line and implement this function correctly
 }
 
