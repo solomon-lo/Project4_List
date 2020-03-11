@@ -198,25 +198,25 @@ bool StreetMap::getSegmentsThatStartWith(const GeoCoord& gc, vector<StreetSegmen
 {
 	return m_impl->getSegmentsThatStartWith(gc, segs);
 }
-
-int main()
-{
-	StreetMapImpl thing;
-	thing.load("mapdata.txt");
-	//GeoCoord endGeoCoord("34.0382807", "-118.4884756");	//runs properly
-	GeoCoord endGeoCoord("34.0390561", "-118.4867356");		//bad run
-	cerr << endGeoCoord.latitudeText << endl;
-	cerr << endGeoCoord.longitudeText << endl;
-	vector<StreetSegment> firstTest;
-	thing.getSegmentsThatStartWith(endGeoCoord, firstTest);
-	for (int i = 0; i < firstTest.size(); i++)
-	{
-		cerr << firstTest[i].start.latitudeText << " " << firstTest[i].start.longitudeText << endl;
-
-		cerr << firstTest[i].end.latitudeText << " " << firstTest[i].end.longitudeText << endl;
-
-	}
-}
+//
+//int main()
+//{
+//	StreetMapImpl thing;
+//	thing.load("mapdata.txt");
+//	//GeoCoord endGeoCoord("34.0382807", "-118.4884756");	//runs properly
+//	GeoCoord endGeoCoord("34.0390561", "-118.4867356");		//bad run
+//	cerr << endGeoCoord.latitudeText << endl;
+//	cerr << endGeoCoord.longitudeText << endl;
+//	vector<StreetSegment> firstTest;
+//	thing.getSegmentsThatStartWith(endGeoCoord, firstTest);
+//	for (int i = 0; i < firstTest.size(); i++)
+//	{
+//		cerr << firstTest[i].start.latitudeText << " " << firstTest[i].start.longitudeText << endl;
+//
+//		cerr << firstTest[i].end.latitudeText << " " << firstTest[i].end.longitudeText << endl;
+//
+//	}
+//}
 
 //34.0547000 -118.4794734 34.0544590 -118.4801137
 //	GeoCoord endGeoCoord("34.0453190", "-118.4966977");

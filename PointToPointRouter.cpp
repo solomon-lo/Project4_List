@@ -86,7 +86,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 				currentSmallestIndex = i;
 			}
 		}
-		currentNode = openList[currentSmallestValue];
+		currentNode = openList[currentSmallestIndex];
 
 		auto deleteIterator = openList.begin();
 		for (int j = 0; j < currentSmallestIndex; j++)
