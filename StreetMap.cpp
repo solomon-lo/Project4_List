@@ -156,7 +156,7 @@ bool StreetMapImpl::getSegmentsThatStartWith(const GeoCoord& gc, vector<StreetSe
 	segs = *GeoCoordToStreetSegmentHashMap.find(gc);
 	//const vector<StreetSegment>* tempVector = GeoCoordToStreetSegmentHashMap.find(gc);
 
-	return(segs.empty());
+	return(!segs.empty());
 	//TODO:EDIT THIS TO ITERATE THROUGH EVERYTHING IN THE VECTOR INSTEAD OF JUST ONE THING. so i access the list, i need to iterate through the pairs and add them to the vector
 	/*if (tempVector == nullptr)
 	{

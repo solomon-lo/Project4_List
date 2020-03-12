@@ -90,7 +90,12 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	
 	//converts all of the street segments to commands
 	int whichDelivery = 0;
+
 	auto it = listOfStreetSegmentsInDeliveries.begin();
+	if ((*it).start == depot)
+	{
+		return DELIVERY_SUCCESS;
+	}
 	for(; it != listOfStreetSegmentsInDeliveries.end(); ++it)	//problem is this part of the code. FIX HERE TODO
 	{
 		StreetSegment startSegment = *it;
@@ -101,6 +106,10 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 		{
 			while (endSegment.name == startSegment.name)
 			{
+				if ((*it).start == depot)
+				{
+					return DELIVERY_SUCCESS;
+				}
 				if (deliveries[whichDelivery].location == startSegment.start)
 				{
 					DeliveryCommand toPushAsDelivery;
@@ -144,6 +153,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 				DeliveryCommand toPushAsProceed;
 				string cardinalForProceed;
 				toPushAsProceed.initAsTurnCommand("left", endSegment.name);
+				commands.push_back(toPushAsProceed);
 			}
 			else if (angleBetweenDifferentNameSegments >= 180.000 && angleBetweenDifferentNameSegments < 359.000)
 			{
@@ -151,13 +161,14 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 				DeliveryCommand toPushAsProceed;
 				string cardinalForProceed;
 				toPushAsProceed.initAsTurnCommand("right", endSegment.name);
+				commands.push_back(toPushAsProceed);
 			}
 		}
-
 		if ((*it).start == depot)
 		{
 			return DELIVERY_SUCCESS;
 		}
+
 	}
 	return NO_ROUTE;  // Delete this line and implement this function correctly
 }

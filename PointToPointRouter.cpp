@@ -1,4 +1,5 @@
 #include "provided.h"
+#include "ExpandableHashMap.h"
 #include <list>
 using namespace std;
 
@@ -39,6 +40,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 	list<StreetSegment>& route,
 	double& totalDistanceTravelled) const
 {
+	totalDistanceTravelled = 0;
 	vector<StreetSegment> FirstPlaceholderVectorForTesting;
 	
 	m_map->getSegmentsThatStartWith(start, FirstPlaceholderVectorForTesting);
@@ -61,8 +63,8 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		return DELIVERY_SUCCESS;
 	}
 
-	vector<Node*> openList;
-	vector<Node*> closedList;
+	list<Node*> openList;
+	list<Node*> closedList;
 
 	Node inputStartNode;
 	inputStartNode.m_GeoCoord = start;
@@ -75,29 +77,33 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 
 	while(!openList.empty())
 	{
-		Node * currentNode = new Node;
+		Node* currentNode = new Node;
 		double currentSmallestValue = 999;
 		int currentSmallestIndex = 0;
-		for (int i = 0; i < openList.size(); i++)
+		
+		currentNode = *openList.begin();
+		for(auto i = openList.begin(); i!= openList.end(); i++)
 		{
-			if (openList[i]->fCost < currentSmallestValue)
+			if ((*i)->fCost < currentSmallestValue)
 			{
-				currentSmallestValue = openList[i]->fCost;
-				currentSmallestIndex = i;
+				currentSmallestValue = (*i)->fCost;
+				currentNode = *i;
 			}
 		}
-		currentNode = openList[currentSmallestIndex];
 
-		auto deleteIterator = openList.begin();
-		for (int j = 0; j < currentSmallestIndex; j++)
+		
+		for(auto deleteIterator = openList.begin(); deleteIterator != openList.end(); deleteIterator++)
 		{
-			deleteIterator++;
+			if ((*deleteIterator)->fCost == currentSmallestValue)
+			{
+				openList.erase(deleteIterator);
+				break;
+			}
 		}
+		closedList.push_front(currentNode);
+		
 
-
-		openList.erase(deleteIterator);
-
-		closedList.insert(closedList.begin(), currentNode);
+		
 		
 		//foudn goal implementation
 
@@ -116,7 +122,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 					for (int i = 0; i < dummyVector.size(); ++i)
 					{
 						int tracker = 0;
-						if (dummyVector[i].end == similarToIteratorPointer.prevGeoCoordNode->m_GeoCoord)
+						if (dummyVector[i].start == similarToIteratorPointer.m_GeoCoord)
 						{
 
 							route.push_front(dummyVector[i]);
@@ -150,11 +156,11 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			//childStartNode.m_GeoCoord = vectorOfPreChildrenStreetSegments[i].start;
 			//childStartNode.prevGeoCoordNode = &currentNode;
 			//currentNode = childStartNode;	//TODO:NOT SURE IF THIS LINE SHOULD BE IN HERE
-			if (vectorOfPreChildrenStreetSegments[i].start == currentNode->m_GeoCoord)
+			if (vectorOfPreChildrenStreetSegments[i].start == currentNode->m_GeoCoord)	//OVER HERE
 			{
 				Node * childEndNode = new Node;
 				childEndNode->m_GeoCoord = vectorOfPreChildrenStreetSegments[i].end;
-				childEndNode->prevGeoCoordNode = (currentNode->prevGeoCoordNode);	//prevGeoCoordNode
+				childEndNode->prevGeoCoordNode = (currentNode);	//prevGeoCoordNode
 				//vectorOfChildrenPreCheck.push_back(childStartNode);
 				vectorOfChildrenPreCheck.push_back(childEndNode);
 			}
@@ -179,9 +185,9 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		for (int z = 0; z != vectorOfChildrenPreCheck.size(); ++z)
 		{
 			bool childPreCheckFoundInClosedList = false;
-			for (int y = 0; y != closedList.size(); ++y)
+			for (auto y = closedList.begin(); y != closedList.end(); ++y)
 			{
-				if (closedList[y]->m_GeoCoord == vectorOfChildrenPreCheck[z]->m_GeoCoord)
+				if ((*y)->m_GeoCoord == vectorOfChildrenPreCheck[z]->m_GeoCoord)
 				{
 					childPreCheckFoundInClosedList = true;
 				}
@@ -193,18 +199,23 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 
 			vectorOfChildrenPreCheck[z]->gCost = currentNode->gCost + distanceEarthMiles(vectorOfChildrenPreCheck[z]->m_GeoCoord, currentNode->m_GeoCoord);
 			vectorOfChildrenPreCheck[z]->hCost = distanceEarthMiles(vectorOfChildrenPreCheck[z]->m_GeoCoord, end);
-			vectorOfChildrenPreCheck[z]->fCost = vectorOfChildrenPreCheck[z]->gCost + vectorOfChildrenPreCheck[z]->gCost;
+			vectorOfChildrenPreCheck[z]->fCost = vectorOfChildrenPreCheck[z]->gCost + vectorOfChildrenPreCheck[z]->hCost;
 			vectorOfChildrenPreCheck[z]->prevGeoCoordNode = currentNode;	//dynamic allocated?
 
-			for (int openListPos = 0; openListPos < openList.size(); openListPos++)
+			for(auto openListPos = openList.begin(); openListPos != openList.end(); openListPos++)
 			{
-				if (openList[openListPos]->m_GeoCoord == vectorOfChildrenPreCheck[z]->m_GeoCoord && vectorOfChildrenPreCheck[z]->gCost > openList[openListPos]->gCost)
+				if ((*openListPos)->m_GeoCoord == vectorOfChildrenPreCheck[z]->m_GeoCoord)
 				{
-					continue;
+					if ((vectorOfChildrenPreCheck[z]->gCost > (*openListPos)->gCost))
+					{
+						continue;
+					}
 				}
 			}
-			openList.insert(openList.begin(), vectorOfChildrenPreCheck[z]);
+			Node* toInsert = vectorOfChildrenPreCheck[z];
+			openList.push_front(toInsert);
 		}
+
 	}	
 	return NO_ROUTE;  // Delete this line and implement this function correctly
 }
