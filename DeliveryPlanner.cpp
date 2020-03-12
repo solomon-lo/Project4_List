@@ -81,6 +81,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	//adds all of the necessary street segments to travel
 	for (int i = 0; i < deliveries.size() - 1; i++)
 	{
+		//m_PointToPointRouter.generatePointToPointRoute(startingCoord, deliveries[i].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
 		m_PointToPointRouter.generatePointToPointRoute(startingCoord, deliveries[i].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
 		startingCoord = deliveries[i + 1].location;
 	}

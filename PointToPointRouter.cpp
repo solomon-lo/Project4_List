@@ -93,12 +93,14 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		{
 			deleteIterator++;
 		}
+
+
 		openList.erase(deleteIterator);
 
 		closedList.insert(closedList.begin(), currentNode);
 
 		//foudn goal implementation
-		if (currentNode.m_GeoCoord == end)
+		if (currentNode.m_GeoCoord == end)	//in morning: this is never returned as true.
 		{
 			//TODO:CHECK HERE FIRST IF THERE'S ERROR
 			Node* similarToIteratorPointer = &currentNode;
@@ -143,6 +145,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			Node childStartNode;
 			childStartNode.m_GeoCoord = vectorOfPreChildrenStreetSegments[i].start;
 			childStartNode.prevGeoCoordNode = &currentNode;
+			currentNode = childStartNode;	//TODO:NOT SURE IF THIS LINE SHOULD BE IN HERE
 
 			Node childEndNode;
 			childEndNode.m_GeoCoord = vectorOfPreChildrenStreetSegments[i].end;
