@@ -1,6 +1,6 @@
 ﻿  PointToPointRouter.cpp
 C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(81,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(112,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(143,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(191,42): warning C4018: '<': signed/unsigned mismatch
-  Project4_Draft2.vcxproj -> C:\Users\Solomon Lo\source\repos\Project4_Draft2\Debug\Project4_Draft2.exe
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(116,24): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(147,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(199,42): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(206,68): error C2143: syntax error: missing ')' before ';'

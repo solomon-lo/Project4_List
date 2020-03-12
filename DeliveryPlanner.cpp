@@ -79,11 +79,11 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	list<StreetSegment> listOfStreetSegmentsInDeliveries;
 
 	//adds all of the necessary street segments to travel
-	for (int i = 0; i < deliveries.size() - 1; i++)
+	for (auto it = deliveries.begin(); it != deliveries.end(); ++it)
 	{
 		//m_PointToPointRouter.generatePointToPointRoute(startingCoord, deliveries[i].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
-		m_PointToPointRouter.generatePointToPointRoute(startingCoord, deliveries[i].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
-		startingCoord = deliveries[i + 1].location;
+		m_PointToPointRouter.generatePointToPointRoute(startingCoord, (*it).location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+		startingCoord = (*it).location;
 	}
 
 	m_PointToPointRouter.generatePointToPointRoute(deliveries[deliveries.size() - 1].location, depot, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
@@ -91,7 +91,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	//converts all of the street segments to commands
 	int whichDelivery = 0;
 	auto it = listOfStreetSegmentsInDeliveries.begin();
-	for(; it != listOfStreetSegmentsInDeliveries.end(); ++it)
+	for(; it != listOfStreetSegmentsInDeliveries.end(); ++it)	//problem is this part of the code. FIX HERE TODO
 	{
 		StreetSegment startSegment = *it;
 		++it;
