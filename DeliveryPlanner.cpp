@@ -82,8 +82,6 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	GeoCoord startingCoord = depot;
 	m_PointToPointRouter.generatePointToPointRoute(startingCoord, inputDeliveries[0].location,  listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
 	
-	
-
 	//adds all of the necessary street segments to travel
 	if (inputDeliveries.size() > 1)
 	{
@@ -100,7 +98,6 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	//	startingCoord = (*it).location;
 	//}
 	m_PointToPointRouter.generatePointToPointRoute(inputDeliveries[inputDeliveries.size() - 1].location, depot, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
-
 
 	/*
 	GeoCoord currentGeocord = depot;
@@ -123,18 +120,19 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	//	return DELIVERY_SUCCESS;
 	//}
 
-	do	//problem is this part of the code. FIX HERE TODO
+	do	
 	{
 		bool wentOnSameStreet = false;
 		StreetSegment startSegment = *StreetSegmentIterator;
-		if (startSegment.start == depot)
+		//if (startSegment.start == depot)
+		//{
+		//	cerr << "reached depot at the top" << endl;
+		//	return DELIVERY_SUCCESS;
+		//}
+		bool alreadyDelivered = false;
+		if (startSegment.start == inputDeliveries[whichDelivery].location)
 		{
-			cerr << "reached depot at the top" << endl;
-			return DELIVERY_SUCCESS;
-		}
-		if (inputDeliveries[whichDelivery].location == startSegment.start)
-		{
-
+			alreadyDelivered = true;
 			DeliveryCommand toPushAsDelivery;
 			toPushAsDelivery.initAsDeliverCommand(inputDeliveries[whichDelivery].item);
 			commands.push_back(toPushAsDelivery);
@@ -142,10 +140,15 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 			{
 				whichDelivery++;
 			}
-			break;	//NOT SURE TODO
+			continue;//NOT SURE TODO
 		}
 
-		++StreetSegmentIterator;		
+		if (!alreadyDelivered)
+		{
+			++StreetSegmentIterator;
+		}
+
+
 		if (startSegment.name == StreetSegmentIterator->name)
 		{
 			double distanceAlongSameNameStreet = 0;
@@ -156,7 +159,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 				//{
 				//	return DELIVERY_SUCCESS;
 				//}
-				if (inputDeliveries[whichDelivery].location == startSegment.start)
+				if (startSegment.start == inputDeliveries[whichDelivery].location)
 				{
 
 					DeliveryCommand toPushAsDelivery;
@@ -175,11 +178,6 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 					distanceAlongSameNameStreet += distanceEarthMiles(startSegment.start, startSegment.end) + distanceEarthMiles(StreetSegmentIterator->start, StreetSegmentIterator->end);
 
 					StreetSegmentIterator++;
-					if (StreetSegmentIterator == listOfStreetSegmentsInDeliveries.end())
-					{
-						StreetSegmentIterator--;
-						break;
-					}
 				}
 			}
 			double angleOfStartSegment = angleOfLine(startSegment);
@@ -224,18 +222,14 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 				commands.push_back(toPushAsProceed);
 			}
 		}
-
-		if (StreetSegmentIterator == listOfStreetSegmentsInDeliveries.end())
+		if ((*StreetSegmentIterator).start == depot || startSegment.start == depot)
 		{
-			StreetSegmentIterator--;
-			if ((*StreetSegmentIterator).start == depot || startSegment.start == depot)
-			{
-				return DELIVERY_SUCCESS;
-			}
+			return DELIVERY_SUCCESS;
 		}
 		//++StreetSegmentIterator;
 	}
 	while (StreetSegmentIterator != listOfStreetSegmentsInDeliveries.end());
+
 	return NO_ROUTE;  // Delete this line and implement this function correctly
 }
 

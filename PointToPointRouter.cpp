@@ -132,6 +132,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 						StreetSegment reversedInOrderToPush;
 						reversedInOrderToPush.start = tempStreetSegmentReturns[i].end;
 						reversedInOrderToPush.end = tempStreetSegmentReturns[i].start;
+						reversedInOrderToPush.name = tempStreetSegmentReturns[i].name;
 						routeToReverse.push_back(reversedInOrderToPush);
 						//route.push_back(tempStreetSegmentReturns[i]);
 						addToroute = tempStreetSegmentReturns[i].end;
