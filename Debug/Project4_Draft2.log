@@ -1,4 +1,2 @@
-﻿  PointToPointRouter.cpp
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(122,24): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(153,21): warning C4018: '<': signed/unsigned mismatch
+﻿  DeliveryPlanner.cpp
   Project4_Draft2.vcxproj -> C:\Users\Solomon Lo\source\repos\Project4_Draft2\Debug\Project4_Draft2.exe

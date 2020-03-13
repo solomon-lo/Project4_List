@@ -91,36 +91,63 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	//converts all of the street segments to commands
 	int whichDelivery = 0;
 
-	auto it = listOfStreetSegmentsInDeliveries.begin();
-	if ((*it).start == depot)
+	auto StreetSegmentIterator = listOfStreetSegmentsInDeliveries.begin();
+	if ((*StreetSegmentIterator).start == depot)
 	{
 		return DELIVERY_SUCCESS;
 	}
-	for(; it != listOfStreetSegmentsInDeliveries.end(); ++it)	//problem is this part of the code. FIX HERE TODO
+
+	do	//problem is this part of the code. FIX HERE TODO
 	{
-		StreetSegment startSegment = *it;
-		++it;
-		StreetSegment endSegment = *it;
-		double distanceAlongSameNameStreet = 0;
-		if (startSegment.name == endSegment.name)
+		bool wentOnSameStreet = false;
+		StreetSegment startSegment = *StreetSegmentIterator;
+		++StreetSegmentIterator;
+		if (StreetSegmentIterator == listOfStreetSegmentsInDeliveries.end())
 		{
-			while (endSegment.name == startSegment.name)
+			StreetSegmentIterator--;
+			if ((*StreetSegmentIterator).start == depot || startSegment.start == depot)
 			{
-				if ((*it).start == depot)
-				{
-					return DELIVERY_SUCCESS;
-				}
+				return DELIVERY_SUCCESS;
+			}
+			break;
+		}
+		double distanceAlongSameNameStreet = 0;
+		if (startSegment.name == StreetSegmentIterator->name)
+		{
+			wentOnSameStreet = true;
+			while (StreetSegmentIterator->name == startSegment.name)
+			{
+				//if ((*StreetSegmentIterator).start == depot)
+				//{
+				//	return DELIVERY_SUCCESS;
+				//}
 				if (deliveries[whichDelivery].location == startSegment.start)
 				{
+
 					DeliveryCommand toPushAsDelivery;
 					toPushAsDelivery.initAsDeliverCommand(deliveries[whichDelivery].item);
+					commands.push_back(toPushAsDelivery);
 					whichDelivery++;
-					
+					break;	//NOT SURE TODO
 				}
-				totalDistanceTravelled += distanceEarthMiles(startSegment.start, startSegment.end) + distanceEarthMiles(endSegment.start, endSegment.end);
-				distanceAlongSameNameStreet += distanceEarthMiles(startSegment.start, startSegment.end) + distanceEarthMiles(endSegment.start, endSegment.end);
-				++it;
-				endSegment = *it;
+				else
+				{
+
+					totalDistanceTravelled += distanceEarthMiles(startSegment.start, startSegment.end) + distanceEarthMiles(StreetSegmentIterator->start, StreetSegmentIterator->end);
+					distanceAlongSameNameStreet += distanceEarthMiles(startSegment.start, startSegment.end) + distanceEarthMiles(StreetSegmentIterator->start, StreetSegmentIterator->end);
+
+					if (startSegment.start == depot)
+					{
+						return DELIVERY_SUCCESS;
+					}
+					StreetSegmentIterator++;
+					if (StreetSegmentIterator == listOfStreetSegmentsInDeliveries.end())
+					{
+						StreetSegmentIterator--;
+						break;
+					}
+				}
+
 			}
 			double angleOfStartSegment = angleOfLine(startSegment);
 			string directionForProceedCommand;
@@ -131,19 +158,19 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 			commands.push_back(topush);
 		}
 
-		else if (startSegment.name != endSegment.name)
+		else if (startSegment.name != StreetSegmentIterator->name)
 		{
-			double angleBetweenDifferentNameSegments = angleBetween2Lines(startSegment, endSegment);
+			double angleBetweenDifferentNameSegments = angleBetween2Lines(startSegment, *StreetSegmentIterator);
 			if (angleBetweenDifferentNameSegments < 1.00 || angleBetweenDifferentNameSegments > 359.000)
 			{
 				
 				DeliveryCommand toPushAsProceed;
 				string cardinalForProceed;
-				double angleBetweenBothSegments = angleBetween2Lines(startSegment, endSegment);
-				double distanceBetweenBothSegments = distanceEarthMiles(startSegment.start, startSegment.end) + distanceEarthMiles(endSegment.start, endSegment.end);
+				double angleBetweenBothSegments = angleBetween2Lines(startSegment, *StreetSegmentIterator);
+				double distanceBetweenBothSegments = distanceEarthMiles(startSegment.start, startSegment.end) + distanceEarthMiles(StreetSegmentIterator->start, StreetSegmentIterator->end);
 
 				getCardinalConversion(angleBetweenBothSegments, cardinalForProceed);
-				toPushAsProceed.initAsProceedCommand(cardinalForProceed, endSegment.name, distanceBetweenBothSegments);
+				toPushAsProceed.initAsProceedCommand(cardinalForProceed, StreetSegmentIterator->name, distanceBetweenBothSegments);
 				commands.push_back(toPushAsProceed);
 			}
 
@@ -152,7 +179,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 
 				DeliveryCommand toPushAsProceed;
 				string cardinalForProceed;
-				toPushAsProceed.initAsTurnCommand("left", endSegment.name);
+				toPushAsProceed.initAsTurnCommand("left", StreetSegmentIterator->name);
 				commands.push_back(toPushAsProceed);
 			}
 			else if (angleBetweenDifferentNameSegments >= 180.000 && angleBetweenDifferentNameSegments < 359.000)
@@ -160,16 +187,17 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 
 				DeliveryCommand toPushAsProceed;
 				string cardinalForProceed;
-				toPushAsProceed.initAsTurnCommand("right", endSegment.name);
+				toPushAsProceed.initAsTurnCommand("right", StreetSegmentIterator->name);
 				commands.push_back(toPushAsProceed);
 			}
 		}
-		if ((*it).start == depot)
+		if ((*StreetSegmentIterator).start == depot || startSegment.start == depot)
 		{
 			return DELIVERY_SUCCESS;
 		}
-
+		//++StreetSegmentIterator;
 	}
+	while (StreetSegmentIterator != listOfStreetSegmentsInDeliveries.end());
 	return NO_ROUTE;  // Delete this line and implement this function correctly
 }
 
