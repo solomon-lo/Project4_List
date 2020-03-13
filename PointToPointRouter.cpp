@@ -110,34 +110,31 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		//backtracking portion
 		if (currentNode->m_GeoCoord == end)	//in morning: this is never returned as true.
 		{
-			//TODO:CHECK HERE FIRST IF THERE'S ERROR
-			Node similarToIteratorPointer = *currentNode;	//todo:not sure about this
-			while (similarToIteratorPointer.prevGeoCoordNode != nullptr)
+			ExpandableHashMap<GeoCoord, GeoCoord> storageOfStreetSegmentReturns;
+			cerr << "finally found the end" << endl;
+			while (currentNode->m_GeoCoord != start)
 			{
+				storageOfStreetSegmentReturns.associate(currentNode->m_GeoCoord, currentNode->prevGeoCoordNode->m_GeoCoord);
+				currentNode = currentNode->prevGeoCoordNode;
+			}
 
-				vector<StreetSegment> dummyVector;
-				StreetSegment tempStreetSegment;
-				if (m_map->getSegmentsThatStartWith((similarToIteratorPointer.m_GeoCoord), dummyVector))
+			GeoCoord addToroute = end;
+			while (addToroute != start)
+			{
+				vector<StreetSegment> tempStreetSegmentReturns;
+				m_map->getSegmentsThatStartWith(addToroute, tempStreetSegmentReturns);
+				for (int i = 0; i < tempStreetSegmentReturns.size(); i++)
 				{
-					for (int i = 0; i < dummyVector.size(); ++i)
+					if (tempStreetSegmentReturns[i].end == *(storageOfStreetSegmentReturns.find(addToroute)))
 					{
-						int tracker = 0;
-						if (dummyVector[i].start == similarToIteratorPointer.m_GeoCoord)
-						{
-
-							route.push_front(dummyVector[i]);
-							totalDistanceTravelled += distanceEarthMiles(dummyVector[i].start, dummyVector[i].end);
-							tracker++;
-							break;
-						}
-						if (tracker >= 2)
-						{
-							cerr << "Error: push fronted too many times!" << endl;
-						}
-
+						//StreetSegment reversedInOrderToPush;
+						//reversedInOrderToPush.start = tempStreetSegmentReturns[i].end;
+						//reversedInOrderToPush.end = tempStreetSegmentReturns[i].start;
+						route.push_back(tempStreetSegmentReturns[i]);
+						addToroute = tempStreetSegmentReturns[i].end;
+						break;
 					}
 				}
-				similarToIteratorPointer = *(similarToIteratorPointer.prevGeoCoordNode);
 			}
 
 			return DELIVERY_SUCCESS;
@@ -152,33 +149,10 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		m_map->getSegmentsThatStartWith(currentNode->m_GeoCoord, vectorOfPreChildrenStreetSegments);
 		for (int i = 0; i < vectorOfPreChildrenStreetSegments.size(); ++i)
 		{
-			//Node childStartNode;
-			//childStartNode.m_GeoCoord = vectorOfPreChildrenStreetSegments[i].start;
-			//childStartNode.prevGeoCoordNode = &currentNode;
-			//currentNode = childStartNode;	//TODO:NOT SURE IF THIS LINE SHOULD BE IN HERE
-			if (vectorOfPreChildrenStreetSegments[i].start == currentNode->m_GeoCoord)	//OVER HERE
-			{
-				Node * childEndNode = new Node;
-				childEndNode->m_GeoCoord = vectorOfPreChildrenStreetSegments[i].end;
-				childEndNode->prevGeoCoordNode = (currentNode);	//prevGeoCoordNode
-				//vectorOfChildrenPreCheck.push_back(childStartNode);
-				vectorOfChildrenPreCheck.push_back(childEndNode);
-			}
-
-
-			//bool vectorOfchildrenSegmentsElementIAlreadyInClosedList = false;
-			//for (int j = 0; j < closedList.size(); ++j)
-			//{
-			//	if ((closedList[j].m_GeoCoord == vectorOfPreChildrenStreetSegments[i].start) || (closedList[j].m_GeoCoord == vectorOfPreChildrenStreetSegments[i].end))
-			//	{
-			//		vectorOfchildrenSegmentsElementIAlreadyInClosedList = true;
-			//	}
-			//}
-			//if (vectorOfchildrenSegmentsElementIAlreadyInClosedList)
-			//{
-			//	continue;
-			//}
-
+			Node* childEndNode = new Node;
+			childEndNode->m_GeoCoord = vectorOfPreChildrenStreetSegments[i].end;
+			childEndNode->prevGeoCoordNode = (currentNode);	//prevGeoCoordNode
+			vectorOfChildrenPreCheck.push_back(childEndNode);
 		}
 
 		//start of: for each child in the children
@@ -212,8 +186,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 					}
 				}
 			}
-			Node* toInsert = vectorOfChildrenPreCheck[z];
-			openList.push_front(toInsert);
+			openList.push_front(vectorOfChildrenPreCheck[z]);
 		}
 
 	}	

@@ -75,45 +75,68 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	vector<DeliveryCommand>& commands,
 	double& totalDistanceTravelled) const
 {
-	GeoCoord startingCoord = depot;
+	
 	list<StreetSegment> listOfStreetSegmentsInDeliveries;
-
+	m_PointToPointRouter.generatePointToPointRoute(depot, deliveries[0].location,  listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+	
+	
+	/*GeoCoord startingCoord = deliveries[deliveries.size() - 1].location;
 	//adds all of the necessary street segments to travel
-	for (auto it = deliveries.begin(); it != deliveries.end(); ++it)
+	for (int i = deliveries.size() - 2; i >= 0; i++)
 	{
-		//m_PointToPointRouter.generatePointToPointRoute(startingCoord, deliveries[i].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
-		m_PointToPointRouter.generatePointToPointRoute(startingCoord, (*it).location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
-		startingCoord = (*it).location;
+		m_PointToPointRouter.generatePointToPointRoute(deliveries[i].location, deliveries[i + 1].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+	}
+	//for(auto it = deliveries.end() - 2; it == deliveries.begin(); --it)
+	//{
+	//	//m_PointToPointRouter.generatePointToPointRoute(startingCoord, deliveries[i].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+	//	m_PointToPointRouter.generatePointToPointRoute((*it).location, startingCoord,  listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+	//	startingCoord = (*it).location;
+	//}
+	m_PointToPointRouter.generatePointToPointRoute(depot, deliveries[0].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+	*/
+	GeoCoord currentGeocord = depot;
+	for (auto currentLocationiterator = deliveries.begin(); currentLocationiterator != deliveries.end(); ++currentLocationiterator)
+	{
+		m_PointToPointRouter.generatePointToPointRoute(currentGeocord, currentLocationiterator->location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+		currentGeocord = currentLocationiterator->location;
 	}
 
-	m_PointToPointRouter.generatePointToPointRoute(deliveries[deliveries.size() - 1].location, depot, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
-	
+	m_PointToPointRouter.generatePointToPointRoute(currentGeocord, depot, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
 	//converts all of the street segments to commands
 	int whichDelivery = 0;
 
 	auto StreetSegmentIterator = listOfStreetSegmentsInDeliveries.begin();
-	if ((*StreetSegmentIterator).start == depot)
-	{
-		return DELIVERY_SUCCESS;
-	}
+	//if ((*StreetSegmentIterator).start == depot)
+	//{
+	//	return DELIVERY_SUCCESS;
+	//}
 
 	do	//problem is this part of the code. FIX HERE TODO
 	{
 		bool wentOnSameStreet = false;
 		StreetSegment startSegment = *StreetSegmentIterator;
-		++StreetSegmentIterator;
-		if (StreetSegmentIterator == listOfStreetSegmentsInDeliveries.end())
+		if (startSegment.start == depot)
 		{
-			StreetSegmentIterator--;
-			if ((*StreetSegmentIterator).start == depot || startSegment.start == depot)
-			{
-				return DELIVERY_SUCCESS;
-			}
-			break;
+			cerr << "reached depot at the top" << endl;
+			return DELIVERY_SUCCESS;
 		}
-		double distanceAlongSameNameStreet = 0;
+		if (deliveries[whichDelivery].location == startSegment.start)
+		{
+
+			DeliveryCommand toPushAsDelivery;
+			toPushAsDelivery.initAsDeliverCommand(deliveries[whichDelivery].item);
+			commands.push_back(toPushAsDelivery);
+			if (whichDelivery + 1 != deliveries.size())
+			{
+				whichDelivery++;
+			}
+			break;	//NOT SURE TODO
+		}
+
+		++StreetSegmentIterator;		
 		if (startSegment.name == StreetSegmentIterator->name)
 		{
+			double distanceAlongSameNameStreet = 0;
 			wentOnSameStreet = true;
 			while (StreetSegmentIterator->name == startSegment.name)
 			{
@@ -127,7 +150,10 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 					DeliveryCommand toPushAsDelivery;
 					toPushAsDelivery.initAsDeliverCommand(deliveries[whichDelivery].item);
 					commands.push_back(toPushAsDelivery);
-					whichDelivery++;
+					if (whichDelivery + 1 != deliveries.size())
+					{
+						whichDelivery++;
+					}
 					break;	//NOT SURE TODO
 				}
 				else
@@ -136,10 +162,6 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 					totalDistanceTravelled += distanceEarthMiles(startSegment.start, startSegment.end) + distanceEarthMiles(StreetSegmentIterator->start, StreetSegmentIterator->end);
 					distanceAlongSameNameStreet += distanceEarthMiles(startSegment.start, startSegment.end) + distanceEarthMiles(StreetSegmentIterator->start, StreetSegmentIterator->end);
 
-					if (startSegment.start == depot)
-					{
-						return DELIVERY_SUCCESS;
-					}
 					StreetSegmentIterator++;
 					if (StreetSegmentIterator == listOfStreetSegmentsInDeliveries.end())
 					{
@@ -147,7 +169,6 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 						break;
 					}
 				}
-
 			}
 			double angleOfStartSegment = angleOfLine(startSegment);
 			string directionForProceedCommand;
@@ -191,9 +212,14 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 				commands.push_back(toPushAsProceed);
 			}
 		}
-		if ((*StreetSegmentIterator).start == depot || startSegment.start == depot)
+
+		if (StreetSegmentIterator == listOfStreetSegmentsInDeliveries.end())
 		{
-			return DELIVERY_SUCCESS;
+			StreetSegmentIterator--;
+			if ((*StreetSegmentIterator).start == depot || startSegment.start == depot)
+			{
+				return DELIVERY_SUCCESS;
+			}
 		}
 		//++StreetSegmentIterator;
 	}
