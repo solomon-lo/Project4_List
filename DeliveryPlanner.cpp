@@ -75,37 +75,49 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	vector<DeliveryCommand>& commands,
 	double& totalDistanceTravelled) const
 {
-	
+	vector<DeliveryRequest> inputDeliveries = deliveries;
 	list<StreetSegment> listOfStreetSegmentsInDeliveries;
-	m_PointToPointRouter.generatePointToPointRoute(depot, deliveries[0].location,  listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+	//reverse(inputDeliveries.begin(), inputDeliveries.end());
+
+	GeoCoord startingCoord = depot;
+	m_PointToPointRouter.generatePointToPointRoute(startingCoord, inputDeliveries[0].location,  listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
 	
 	
-	/*GeoCoord startingCoord = deliveries[deliveries.size() - 1].location;
+
 	//adds all of the necessary street segments to travel
-	for (int i = deliveries.size() - 2; i >= 0; i++)
+	if (inputDeliveries.size() > 1)
 	{
-		m_PointToPointRouter.generatePointToPointRoute(deliveries[i].location, deliveries[i + 1].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+		for (int i = 0; i < inputDeliveries.size() - 2; i++)
+		{
+			m_PointToPointRouter.generatePointToPointRoute(inputDeliveries[i].location, inputDeliveries[i + 1].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+		}
 	}
-	//for(auto it = deliveries.end() - 2; it == deliveries.begin(); --it)
+
+	//for(auto it = inputDeliveries.end() - 2; it == inputDeliveries.begin(); --it)
 	//{
-	//	//m_PointToPointRouter.generatePointToPointRoute(startingCoord, deliveries[i].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+	//	//m_PointToPointRouter.generatePointToPointRoute(startingCoord, inputDeliveries[i].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
 	//	m_PointToPointRouter.generatePointToPointRoute((*it).location, startingCoord,  listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
 	//	startingCoord = (*it).location;
 	//}
-	m_PointToPointRouter.generatePointToPointRoute(depot, deliveries[0].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
-	*/
+	m_PointToPointRouter.generatePointToPointRoute(inputDeliveries[inputDeliveries.size() - 1].location, depot, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+
+
+	/*
 	GeoCoord currentGeocord = depot;
-	for (auto currentLocationiterator = deliveries.begin(); currentLocationiterator != deliveries.end(); ++currentLocationiterator)
+	for (auto currentLocationiterator = inputDeliveries.begin(); currentLocationiterator != inputDeliveries.end(); ++currentLocationiterator)
 	{
 		m_PointToPointRouter.generatePointToPointRoute(currentGeocord, currentLocationiterator->location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
 		currentGeocord = currentLocationiterator->location;
 	}
 
-	m_PointToPointRouter.generatePointToPointRoute(currentGeocord, depot, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+	m_PointToPointRouter.generatePointToPointRoute(inputDeliveries[inputDeliveries.size() - 1].location, depot, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
 	//converts all of the street segments to commands
+		*/
 	int whichDelivery = 0;
 
 	auto StreetSegmentIterator = listOfStreetSegmentsInDeliveries.begin();
+
+
 	//if ((*StreetSegmentIterator).start == depot)
 	//{
 	//	return DELIVERY_SUCCESS;
@@ -120,13 +132,13 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 			cerr << "reached depot at the top" << endl;
 			return DELIVERY_SUCCESS;
 		}
-		if (deliveries[whichDelivery].location == startSegment.start)
+		if (inputDeliveries[whichDelivery].location == startSegment.start)
 		{
 
 			DeliveryCommand toPushAsDelivery;
-			toPushAsDelivery.initAsDeliverCommand(deliveries[whichDelivery].item);
+			toPushAsDelivery.initAsDeliverCommand(inputDeliveries[whichDelivery].item);
 			commands.push_back(toPushAsDelivery);
-			if (whichDelivery + 1 != deliveries.size())
+			if (whichDelivery + 1 != inputDeliveries.size())
 			{
 				whichDelivery++;
 			}
@@ -144,13 +156,13 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 				//{
 				//	return DELIVERY_SUCCESS;
 				//}
-				if (deliveries[whichDelivery].location == startSegment.start)
+				if (inputDeliveries[whichDelivery].location == startSegment.start)
 				{
 
 					DeliveryCommand toPushAsDelivery;
-					toPushAsDelivery.initAsDeliverCommand(deliveries[whichDelivery].item);
+					toPushAsDelivery.initAsDeliverCommand(inputDeliveries[whichDelivery].item);
 					commands.push_back(toPushAsDelivery);
-					if (whichDelivery + 1 != deliveries.size())
+					if (whichDelivery + 1 != inputDeliveries.size())
 					{
 						whichDelivery++;
 					}

@@ -43,6 +43,8 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 	totalDistanceTravelled = 0;
 	vector<StreetSegment> FirstPlaceholderVectorForTesting;
 	
+	list<StreetSegment> routeToReverse;
+
 	m_map->getSegmentsThatStartWith(start, FirstPlaceholderVectorForTesting);
 	if (FirstPlaceholderVectorForTesting.empty() == true)
 	{
@@ -127,16 +129,21 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 				{
 					if (tempStreetSegmentReturns[i].end == *(storageOfStreetSegmentReturns.find(addToroute)))
 					{
-						//StreetSegment reversedInOrderToPush;
-						//reversedInOrderToPush.start = tempStreetSegmentReturns[i].end;
-						//reversedInOrderToPush.end = tempStreetSegmentReturns[i].start;
-						route.push_back(tempStreetSegmentReturns[i]);
+						StreetSegment reversedInOrderToPush;
+						reversedInOrderToPush.start = tempStreetSegmentReturns[i].end;
+						reversedInOrderToPush.end = tempStreetSegmentReturns[i].start;
+						routeToReverse.push_back(reversedInOrderToPush);
+						//route.push_back(tempStreetSegmentReturns[i]);
 						addToroute = tempStreetSegmentReturns[i].end;
 						break;
 					}
 				}
 			}
-
+			routeToReverse.reverse();
+			for (auto it = routeToReverse.begin(); it != routeToReverse.end(); it++)
+			{
+				route.push_back(*it);
+			}
 			return DELIVERY_SUCCESS;
 		}
 
