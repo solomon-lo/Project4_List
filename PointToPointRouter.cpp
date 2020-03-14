@@ -68,14 +68,14 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 	list<Node*> openList;
 	list<Node*> closedList;
 
-	Node inputStartNode;
-	inputStartNode.m_GeoCoord = start;
-	inputStartNode.prevGeoCoordNode = nullptr;
-	inputStartNode.fCost = 0;
-	inputStartNode.gCost = 0;
-	inputStartNode.hCost = 0;
+	Node * inputStartNode = new Node;
+	inputStartNode->m_GeoCoord = start;
+	inputStartNode->prevGeoCoordNode = nullptr;
+	inputStartNode->fCost = 0;
+	inputStartNode->gCost = 0;
+	inputStartNode->hCost = 0;
 
-	openList.insert(openList.begin(), &inputStartNode);
+	openList.push_back(inputStartNode);
 
 	while(!openList.empty())
 	{
@@ -84,13 +84,17 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		int currentSmallestIndex = 0;
 		
 		currentNode = *openList.begin();
+		int currentNodeIndex = 0;
+		int currentIndex = 0;
 		for(auto i = openList.begin(); i!= openList.end(); i++)
 		{
 			if ((*i)->fCost < currentSmallestValue)
 			{
 				currentSmallestValue = (*i)->fCost;
 				currentNode = *i;
+				currentNodeIndex = currentIndex;
 			}
+			currentIndex++;
 		}
 
 		
@@ -102,7 +106,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 				break;
 			}
 		}
-		closedList.push_front(currentNode);
+		closedList.push_back(currentNode);
 		
 
 		
@@ -120,14 +124,14 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 				currentNode = currentNode->prevGeoCoordNode;
 			}
 
-			GeoCoord addToroute = end;
-			while (addToroute != start)
+			currentNode->m_GeoCoord = end;
+			while (currentNode->m_GeoCoord != start)
 			{
 				vector<StreetSegment> tempStreetSegmentReturns;
-				m_map->getSegmentsThatStartWith(addToroute, tempStreetSegmentReturns);
+				m_map->getSegmentsThatStartWith(currentNode->m_GeoCoord, tempStreetSegmentReturns);
 				for (int i = 0; i < tempStreetSegmentReturns.size(); i++)
 				{
-					if (tempStreetSegmentReturns[i].end == *(storageOfStreetSegmentReturns.find(addToroute)))
+					if (tempStreetSegmentReturns[i].end == *(storageOfStreetSegmentReturns.find(currentNode->m_GeoCoord)))
 					{
 						StreetSegment reversedInOrderToPush;
 						reversedInOrderToPush.start = tempStreetSegmentReturns[i].end;
@@ -135,7 +139,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 						reversedInOrderToPush.name = tempStreetSegmentReturns[i].name;
 						routeToReverse.push_back(reversedInOrderToPush);
 						//route.push_back(tempStreetSegmentReturns[i]);
-						addToroute = tempStreetSegmentReturns[i].end;
+						currentNode->m_GeoCoord = tempStreetSegmentReturns[i].end;
 						break;
 					}
 				}
@@ -172,6 +176,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 				if ((*y)->m_GeoCoord == vectorOfChildrenPreCheck[z]->m_GeoCoord)
 				{
 					childPreCheckFoundInClosedList = true;
+					break;
 				}
 			}
 			if (childPreCheckFoundInClosedList)
