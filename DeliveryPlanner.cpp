@@ -105,7 +105,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 
 	StreetSegment previousStreetSegment = *currentStreetSegmentIterator;
 
-	do
+	while (currentStreetSegmentIterator != listOfStreetSegmentsInDeliveries.end())
 	{
 		bool wentOnSameStreet = false;
 		bool alreadyDelivered = false;
@@ -223,7 +223,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 		previousStreetSegment = *currentStreetSegmentIterator;
 
 		currentStreetSegmentIterator++;
-	} while (currentStreetSegmentIterator != listOfStreetSegmentsInDeliveries.end());
+	} 
 
 	return NO_ROUTE;  // Delete this line and implement this function correctly
 }

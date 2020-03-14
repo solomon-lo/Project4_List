@@ -105,45 +105,59 @@ bool StreetMapImpl::load(string mapFile)
 			tempStreetSegment.end = endGeoCoord;
 			reveresedTempStreetSegment.start = endGeoCoord;
 
-
 			vectorOfGeoCoords.push_back(startGeoCoord);
 			vectorOfGeoCoords.push_back(endGeoCoord);
 
+
 			vectorOfStreetSegments.push_back(tempStreetSegment);
 			vectorOfReversedStreetSegments.push_back(reveresedTempStreetSegment);
-		}
 
-
-		for (int i = 0; i < vectorOfGeoCoords.size(); i++)
-		{
 			vector<StreetSegment> StreetSegmentsToAssociate;
-
-			//pushes street segments that have a first coord the same as the GeoCoord
-			for (int j = 0; j < vectorOfStreetSegments.size(); j++)
+			for (int i = 0; i < vectorOfGeoCoords.size(); i++)
 			{
-				if (vectorOfStreetSegments[j].start == vectorOfGeoCoords[i])
+
+
+
+				//pushes street segments that have a first coord the same as the GeoCoord
+				for (int j = 0; j < vectorOfStreetSegments.size(); j++)
 				{
-					StreetSegmentsToAssociate.push_back(vectorOfStreetSegments[j]);
+					if (vectorOfStreetSegments[j].start == vectorOfGeoCoords[i])
+					{
+						StreetSegmentsToAssociate.push_back(vectorOfStreetSegments[j]);
+					}
+					//maybe we need to add if the end is the same as well?
 				}
-				//maybe we need to add if the end is the same as well?
-			}
 
-			//TODO:WE CAN'T ACCESDS AN ITEM THAT'S A NODE IN THE ARRAY IF IT'S A NEXTNODE
-			//AFTER DISCU:switch where we find which ones are the same which ones are pushed back so that this is handled in the getSegmentsThatStartWith.
+				//TODO:WE CAN'T ACCESDS AN ITEM THAT'S A NODE IN THE ARRAY IF IT'S A NEXTNODE
+				//AFTER DISCU:switch where we find which ones are the same which ones are pushed back so that this is handled in the getSegmentsThatStartWith.
 
-			//pushes reversed street segments that have a first coord the same as the GeoCoord
-			for (int j = 0; j < vectorOfReversedStreetSegments.size(); j++)
-			{
-				if (vectorOfReversedStreetSegments[j].start == vectorOfGeoCoords[i])
+				//pushes reversed street segments that have a first coord the same as the GeoCoord
+				for (int j = 0; j < vectorOfReversedStreetSegments.size(); j++)
 				{
-					StreetSegmentsToAssociate.push_back(vectorOfReversedStreetSegments[j]);
-				}	//MAYBE COMBINE THIS WITH THE EARLIER FOR LOOP AND DO .END INSTEAD
+					if (vectorOfReversedStreetSegments[j].start == vectorOfGeoCoords[i])
+					{
+						StreetSegmentsToAssociate.push_back(vectorOfReversedStreetSegments[j]);
+					}	//MAYBE COMBINE THIS WITH THE EARLIER FOR LOOP AND DO .END INSTEAD
+				}
+
 			}
 
-			GeoCoordToStreetSegmentHashMap.associate(vectorOfGeoCoords[i], StreetSegmentsToAssociate);
+			vector<StreetSegment>* returnedValueVector = GeoCoordToStreetSegmentHashMap.find(startGeoCoord);
 
+			if (returnedValueVector == nullptr)
+			{
+
+				GeoCoordToStreetSegmentHashMap.associate(vectorOfGeoCoords[i], StreetSegmentsToAssociate);
+			}
+			else if (returnedValueVector != nullptr)
+			{
+				for (int i = 0; i < StreetSegmentsToAssociate.size(); i++)
+				{
+					returnedValueVector->push_back(StreetSegmentsToAssociate[i]);
+				}
+				
+			}
 		}
-
 	}
 
 	cerr << "reached return true on load" << endl;

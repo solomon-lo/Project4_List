@@ -84,32 +84,28 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		int currentSmallestIndex = 0;
 
 		currentNode = *openList.begin();
-		int currentNodeIndex = 0;
 		int currentIndex = 0;
 		for (auto i = openList.begin(); i != openList.end(); i++)
 		{
 			if ((*i)->fCost < currentSmallestValue)
 			{
+				currentNode = *i;
 				currentSmallestValue = (*i)->fCost;
 				cerr << "current smallest fCost" << (*i)->fCost << endl;
-				currentNode = *i;
-				currentNodeIndex = currentIndex;
+				currentSmallestIndex = currentIndex;
 			}
-			currentIndex++;
+			currentSmallestIndex++;
 		}
-		closedList.push_back(currentNode);
 
-
-		auto deleteIterator = openList.begin();
-		for (int i = 0; i < currentNodeIndex; i++)
+		for (auto deleteIterator = openList.begin(); deleteIterator != openList.end(); deleteIterator++)
 		{
 			if ((*deleteIterator)->fCost == currentSmallestValue)
 			{
-				deleteIterator++;
-
+				openList.erase(deleteIterator);
+				break;
 			}
 		}
-		openList.erase(deleteIterator);
+		closedList.push_back(currentNode);
 
 		//foudn goal implementation
 
@@ -177,7 +173,6 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 				if ((*y)->m_GeoCoord == vectorOfNodePointerToChildren[z]->m_GeoCoord)
 				{
 					childPreCheckFoundInClosedList = true;
-					break;
 				}
 			}
 			if (childPreCheckFoundInClosedList)
@@ -192,10 +187,9 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			bool needToSkip = false;
 			for (auto openListPos = openList.begin(); openListPos != openList.end(); openListPos++)
 			{
-				if ((*openListPos)->m_GeoCoord == vectorOfNodePointerToChildren[z]->m_GeoCoord && ((vectorOfNodePointerToChildren[z]->gCost > (*openListPos)->gCost)))
+				if (((*openListPos)->m_GeoCoord == vectorOfNodePointerToChildren[z]->m_GeoCoord) && ((vectorOfNodePointerToChildren[z]->gCost > (*openListPos)->gCost)))
 				{
 					needToSkip = true;
-					break;
 				}
 			}
 			if (needToSkip)
@@ -205,6 +199,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			openList.push_front(vectorOfNodePointerToChildren[z]);
 		}
 
+		
 	}
 	return NO_ROUTE;  // Delete this line and implement this function correctly
 }
