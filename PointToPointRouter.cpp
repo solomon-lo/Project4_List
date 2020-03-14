@@ -88,7 +88,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		int currentIndex = 0;
 		for (auto i = openList.begin(); i != openList.end(); i++)
 		{
-			if ((*i)->fCost < currentSmallestValue)
+			if ((*i)->fCost < currentNode->fCost)
 			{
 				currentSmallestValue = (*i)->fCost;
 				cerr << "current smallest fCost" << (*i)->fCost << endl;
@@ -98,7 +98,8 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			currentIndex++;
 		}
 
-		
+
+		closedList.push_back(currentNode);
 		auto deleteIterator = openList.begin();
 		for (int i = 0; i < currentNodeIndex; i++)
 		{
@@ -106,7 +107,6 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		}
 		cerr << "test of fcost" << (*deleteIterator)->fCost << endl;
 		openList.erase(deleteIterator);
-		closedList.push_back(currentNode);
 
 
 
@@ -119,7 +119,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			cerr << "entered backtracking portion" << endl;
 			ExpandableHashMap<GeoCoord, GeoCoord> storageOfStreetSegmentReturns;
 			cerr << "finally found the end" << endl;
-			while (currentNode->m_GeoCoord != start)
+			while (!(currentNode->m_GeoCoord == start))
 			{
 				storageOfStreetSegmentReturns.associate(currentNode->m_GeoCoord, currentNode->prevGeoCoordNode->m_GeoCoord);
 				currentNode = currentNode->prevGeoCoordNode;
@@ -133,7 +133,6 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 				m_map->getSegmentsThatStartWith(currentNode->m_GeoCoord, tempStreetSegmentReturns);
 				for (int i = 0; i < tempStreetSegmentReturns.size(); i++)
 				{
-					cerr << "for (int i = 0; i < tempStreetSegmentReturns.size(); i++)" << endl;
 					if (tempStreetSegmentReturns[i].end == *(storageOfStreetSegmentReturns.find(currentNode->m_GeoCoord)))
 					{
 						StreetSegment reversedInOrderToPush;
@@ -166,12 +165,12 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		{
 			Node* childEndNode = new Node;
 			childEndNode->m_GeoCoord = childrenStreetSegments[i].end;
-			//childEndNode->prevGeoCoordNode = (currentNode);	//prevGeoCoordNode
+			childEndNode->prevGeoCoordNode = (currentNode);	//prevGeoCoordNode
 			vectorOfNodePointerToChildren.push_back(childEndNode);
 		}
 
 		//start of: for each child in the children
-		for (int z = 0; z != vectorOfNodePointerToChildren.size(); ++z)
+		for (int z = 0; z < vectorOfNodePointerToChildren.size(); ++z)
 		{
 			bool childPreCheckFoundInClosedList = false;
 			for (auto y = closedList.begin(); y != closedList.end(); ++y)
@@ -199,14 +198,15 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 					if ((vectorOfNodePointerToChildren[z]->gCost > (*openListPos)->gCost))
 					{
 						needToSkip = true;
+						break;
 					}
 				}
 			}
 			if (!needToSkip)
 			{
-				openList.push_front(vectorOfNodePointerToChildren[z]);
+				continue;
 			}
-			
+			openList.push_front(vectorOfNodePointerToChildren[z]);
 		}
 
 	}

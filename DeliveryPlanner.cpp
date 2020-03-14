@@ -75,6 +75,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	vector<DeliveryCommand>& commands,
 	double& totalDistanceTravelled) const
 {
+	commands.clear();
 	vector<DeliveryRequest> inputDeliveries = deliveries;
 	list<StreetSegment> listOfStreetSegmentsInDeliveries;
 	//reverse(inputDeliveries.begin(), inputDeliveries.end());
