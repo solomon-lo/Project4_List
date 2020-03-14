@@ -75,14 +75,18 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	vector<DeliveryCommand>& commands,
 	double& totalDistanceTravelled) const
 {
-	commands.clear();
 	vector<DeliveryRequest> inputDeliveries = deliveries;
 	list<StreetSegment> listOfStreetSegmentsInDeliveries;
 	//reverse(inputDeliveries.begin(), inputDeliveries.end());
 
 	GeoCoord startingCoord = depot;
-	m_PointToPointRouter.generatePointToPointRoute(startingCoord, inputDeliveries[0].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
-
+	DeliveryResult thing = m_PointToPointRouter.generatePointToPointRoute(startingCoord, inputDeliveries[0].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+	cerr << "advanced to next generate PointToPoint" << endl;
+	if (thing == NO_ROUTE)
+	{
+		return thing;
+	}
+	
 	//adds all of the necessary street segments to travel
 	if (inputDeliveries.size() > 1)
 	{
@@ -112,7 +116,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 			commands.push_back(toPushAsDelivery);
 			continue;
 		}
-		
+
 
 		//if (startSegment.start == depot)
 		//{
@@ -198,7 +202,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 				{
 
 					totalDistanceTravelled += distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end);
-					commands[commands.size()-1].increaseDistance(distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end));
+					commands[commands.size() - 1].increaseDistance(distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end));
 					if ((*currentStreetSegmentIterator).end == depot)
 					{
 						return DELIVERY_SUCCESS;
