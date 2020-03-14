@@ -59,6 +59,7 @@ bool StreetMapImpl::load(string mapFile)
 		StreetSegment tempStreetSegment;
 		StreetSegment reveresedTempStreetSegment;	//the same as tempStreetSegment, but it's actually has switched end and start coordinates
 		tempStreetSegment.name = s;
+		cerr << tempStreetSegment.name << endl;
 		reveresedTempStreetSegment.name = s;
 
 		int numOfSegmentsOnStreet = 0;

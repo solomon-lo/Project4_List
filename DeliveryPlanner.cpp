@@ -155,10 +155,22 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 			}
 		}
 
-		if (currentStreetSegmentIterator->name == previousStreetSegment.name)
+		else if (currentStreetSegmentIterator->name == previousStreetSegment.name)
 		{
-			double distanceAlongSameNameStreet = distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
-			wentOnSameStreet = true;
+			{
+
+				double distanceAlongSameNameStreet = distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
+				wentOnSameStreet = true;
+				double angleOfStartSegment = angleOfLine(*currentStreetSegmentIterator);
+				string directionForProceedCommand;
+
+				getCardinalConversion(angleOfStartSegment, directionForProceedCommand);
+				DeliveryCommand topush;
+				topush.initAsProceedCommand(directionForProceedCommand, previousStreetSegment.name, distanceAlongSameNameStreet);
+				commands.push_back(topush);
+			}
+
+			bool iteratedSasmeStreetMoreThanOnce = false;
 			while (currentStreetSegmentIterator->name == previousStreetSegment.name)
 			{
 				if (currentStreetSegmentIterator->start == inputDeliveries[whichDelivery].location)
@@ -177,26 +189,16 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 				{
 
 					totalDistanceTravelled += distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end);
-					distanceAlongSameNameStreet += distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end);
+					commands[commands.size()-1].increaseDistance(distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end));
 					if ((*currentStreetSegmentIterator).end == depot)
 					{
 						return DELIVERY_SUCCESS;
 					}
 					currentStreetSegmentIterator++;
-
-
 				}
 			}
-			if (alreadyDelivered == false)
-			{
-				double angleOfStartSegment = angleOfLine(*currentStreetSegmentIterator);
-				string directionForProceedCommand;
+			//if (alreadyDelivered == false) TODO:
 
-				getCardinalConversion(angleOfStartSegment, directionForProceedCommand);
-				DeliveryCommand topush;
-				topush.initAsProceedCommand(directionForProceedCommand, previousStreetSegment.name, distanceAlongSameNameStreet);
-				commands.push_back(topush);
-			}
 		}
 
 		if ((*currentStreetSegmentIterator).end == depot)
