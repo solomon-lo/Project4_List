@@ -182,8 +182,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			vectorOfChildrenPreCheck[z]->gCost = currentNode->gCost + distanceEarthMiles(vectorOfChildrenPreCheck[z]->m_GeoCoord, currentNode->m_GeoCoord);
 			vectorOfChildrenPreCheck[z]->hCost = distanceEarthMiles(vectorOfChildrenPreCheck[z]->m_GeoCoord, end);
 			vectorOfChildrenPreCheck[z]->fCost = vectorOfChildrenPreCheck[z]->gCost + vectorOfChildrenPreCheck[z]->hCost;
-			vectorOfChildrenPreCheck[z]->prevGeoCoordNode = currentNode;	//dynamic allocated?
-
+			vectorOfChildrenPreCheck[z]->prevGeoCoordNode = currentNode;
 			for(auto openListPos = openList.begin(); openListPos != openList.end(); openListPos++)
 			{
 				if ((*openListPos)->m_GeoCoord == vectorOfChildrenPreCheck[z]->m_GeoCoord)
