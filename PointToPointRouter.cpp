@@ -94,23 +94,22 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 				cerr << "current smallest fCost" << (*i)->fCost << endl;
 				currentSmallestIndex = currentIndex;
 			}
-			currentSmallestIndex++;
+			currentIndex++;
 		}
 
-		for (auto deleteIterator = openList.begin(); deleteIterator != openList.end(); deleteIterator++)
+
+		auto it = openList.begin();
+		for (int i = 0; i < currentSmallestIndex; i++)
 		{
-			if ((*deleteIterator)->fCost == currentSmallestValue)
-			{
-				openList.erase(deleteIterator);
-				break;
-			}
+			++it;
 		}
 		closedList.push_back(currentNode);
+		openList.erase(it);
 
-		//foudn goal implementation
 
+		//found goal implementation
 		//backtracking portion
-		if (currentNode->m_GeoCoord == end)	//in morning: this is never returned as true.
+		if (currentNode->m_GeoCoord == end)	
 		{
 			ExpandableHashMap<GeoCoord, GeoCoord> storageOfStreetSegmentReturns;
 			cerr << "finally found the end" << endl;

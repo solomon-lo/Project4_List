@@ -105,34 +105,20 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 
 	StreetSegment previousStreetSegment = *currentStreetSegmentIterator;
 
+	currentStreetSegmentIterator++;
+
+	double distanceAlongSameNameStreet = distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
+	double angleOfStartSegment = angleOfLine(*currentStreetSegmentIterator);
+	string directionForProceedCommand;
+
+	getCardinalConversion(angleOfStartSegment, directionForProceedCommand);
+	DeliveryCommand topush;
+	topush.initAsProceedCommand(directionForProceedCommand, previousStreetSegment.name, distanceAlongSameNameStreet);
+	commands.push_back(topush);
+	bool alreadyDelivered = false;
 	while (currentStreetSegmentIterator != listOfStreetSegmentsInDeliveries.end())
 	{
 		bool wentOnSameStreet = false;
-		bool alreadyDelivered = false;
-		if (currentStreetSegmentIterator->start == inputDeliveries[whichDelivery].location)
-		{
-			alreadyDelivered = true;
-			DeliveryCommand toPushAsDelivery;
-			toPushAsDelivery.initAsDeliverCommand(inputDeliveries[whichDelivery].item);
-			commands.push_back(toPushAsDelivery);
-			continue;
-		}
-
-
-		//if (startSegment.start == depot)
-		//{
-		//	cerr << "reached depot at the top" << endl;
-		//	return DELIVERY_SUCCESS;
-		//}
-
-		if (currentStreetSegmentIterator->start == inputDeliveries[whichDelivery].location)
-		{
-			alreadyDelivered = true;
-			DeliveryCommand toPushAsDelivery;
-			toPushAsDelivery.initAsDeliverCommand(inputDeliveries[whichDelivery].item);
-			commands.push_back(toPushAsDelivery);
-			continue;
-		}
 
 		if (previousStreetSegment.name != currentStreetSegmentIterator->name && !(alreadyDelivered))
 		{
@@ -161,32 +147,40 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 			}
 			else if (angleBetweenDifferentNameSegments >= 180.000 && angleBetweenDifferentNameSegments < 359.000)
 			{
-
 				DeliveryCommand toPushAsRightTurn;
 				string cardinalForProceed;
 				toPushAsRightTurn.initAsTurnCommand("right", currentStreetSegmentIterator->name);
 				commands.push_back(toPushAsRightTurn);
 			}
 		}
-
-		else if (currentStreetSegmentIterator->name == previousStreetSegment.name)
+		else
 		{
-			{
+			double distanceAlongSameNameStreet = distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
+			wentOnSameStreet = true;
+			double angleOfStartSegment = angleOfLine(*currentStreetSegmentIterator);
+			string directionForProceedCommand;
 
-				double distanceAlongSameNameStreet = distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
-				wentOnSameStreet = true;
-				double angleOfStartSegment = angleOfLine(*currentStreetSegmentIterator);
-				string directionForProceedCommand;
+			getCardinalConversion(angleOfStartSegment, directionForProceedCommand);
+			DeliveryCommand topush;
+			topush.initAsProceedCommand(directionForProceedCommand, previousStreetSegment.name, distanceAlongSameNameStreet);
+			commands.push_back(topush);
 
-				getCardinalConversion(angleOfStartSegment, directionForProceedCommand);
-				DeliveryCommand topush;
-				topush.initAsProceedCommand(directionForProceedCommand, previousStreetSegment.name, distanceAlongSameNameStreet);
-				commands.push_back(topush);
-			}
-
-			bool iteratedSasmeStreetMoreThanOnce = false;
 			while (currentStreetSegmentIterator->name == previousStreetSegment.name)
 			{
+				if ((*currentStreetSegmentIterator).end == depot)
+				{
+					double distanceAlongSameNameStreet = distanceEarthMiles((*currentStreetSegmentIterator).start, (*currentStreetSegmentIterator).end);
+					double angleOfStartSegment = angleOfLine(*currentStreetSegmentIterator);
+					string directionForProceedCommand;
+
+					getCardinalConversion(angleOfStartSegment, directionForProceedCommand);
+					DeliveryCommand topush;
+					topush.initAsProceedCommand(directionForProceedCommand, previousStreetSegment.name, distanceAlongSameNameStreet);
+					commands.push_back(topush);
+
+					totalDistanceTravelled += distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end);
+					return DELIVERY_SUCCESS;
+				}
 				if (currentStreetSegmentIterator->start == inputDeliveries[whichDelivery].location)
 				{
 					alreadyDelivered = true;
@@ -197,7 +191,6 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 					{
 						whichDelivery++;
 					}
-					break;
 				}
 				else
 				{
@@ -206,23 +199,50 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 					commands[commands.size() - 1].increaseDistance(distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end));
 					if ((*currentStreetSegmentIterator).end == depot)
 					{
+						double distanceAlongSameNameStreet = distanceEarthMiles((*currentStreetSegmentIterator).start, (*currentStreetSegmentIterator).end);
+						double angleOfStartSegment = angleOfLine(*currentStreetSegmentIterator);
+						string directionForProceedCommand;
+
+						getCardinalConversion(angleOfStartSegment, directionForProceedCommand);
+						DeliveryCommand topush;
+						topush.initAsProceedCommand(directionForProceedCommand, previousStreetSegment.name, distanceAlongSameNameStreet);
+						commands.push_back(topush);
+
+						totalDistanceTravelled += distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end);
 						return DELIVERY_SUCCESS;
 					}
-					currentStreetSegmentIterator++;
+					
 				}
+				currentStreetSegmentIterator++;
 			}
-			//if (alreadyDelivered == false) TODO:
-
+		}
+		if (currentStreetSegmentIterator->start == inputDeliveries[whichDelivery].location)
+		{
+			alreadyDelivered = true;
+			DeliveryCommand toPushAsDelivery;
+			toPushAsDelivery.initAsDeliverCommand(inputDeliveries[whichDelivery].item);
+			commands.push_back(toPushAsDelivery);
+			currentStreetSegmentIterator++;
 		}
 
 		if ((*currentStreetSegmentIterator).end == depot)
 		{
+			double distanceAlongSameNameStreet = distanceEarthMiles((*currentStreetSegmentIterator).start, (*currentStreetSegmentIterator).end);
+			double angleOfStartSegment = angleOfLine(*currentStreetSegmentIterator);
+			string directionForProceedCommand;
+
+			getCardinalConversion(angleOfStartSegment, directionForProceedCommand);
+			DeliveryCommand topush;
+			topush.initAsProceedCommand(directionForProceedCommand, previousStreetSegment.name, distanceAlongSameNameStreet);
+			commands.push_back(topush);
+
 			totalDistanceTravelled += distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end);
 			return DELIVERY_SUCCESS;
 		}
-		previousStreetSegment = *currentStreetSegmentIterator;
 
+		previousStreetSegment = *currentStreetSegmentIterator;
 		currentStreetSegmentIterator++;
+		alreadyDelivered = false;
 	} 
 
 	return NO_ROUTE;  // Delete this line and implement this function correctly

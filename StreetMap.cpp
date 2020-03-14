@@ -52,15 +52,13 @@ bool StreetMapImpl::load(string mapFile)
 	while (getline(infile, s))
 	{
 
-		vector<StreetSegment> vectorOfStreetSegments;
-		vector<StreetSegment> vectorOfReversedStreetSegments;
-		vector<GeoCoord> vectorOfGeoCoords;
-
 		StreetSegment tempStreetSegment;
 		StreetSegment reveresedTempStreetSegment;	//the same as tempStreetSegment, but it's actually has switched end and start coordinates
+		
 		tempStreetSegment.name = s;
-		cerr << tempStreetSegment.name << endl;
 		reveresedTempStreetSegment.name = s;
+		cerr << tempStreetSegment.name << endl;
+
 
 		int numOfSegmentsOnStreet = 0;
 		infile >> numOfSegmentsOnStreet;
@@ -94,68 +92,43 @@ bool StreetMapImpl::load(string mapFile)
 
 			GeoCoord startGeoCoord(X_X_ForStartCoord, Y_Y_ForStartCoord);
 
-			tempStreetSegment.start = startGeoCoord;
-			reveresedTempStreetSegment.end = startGeoCoord;
+
+
+
 
 			string X_X_ForEndingCoord = numbers[2];
 			string Y_Y_ForEndingCoord = numbers[3];
 
 
 			GeoCoord endGeoCoord(X_X_ForEndingCoord, Y_Y_ForEndingCoord);
+
+			tempStreetSegment.start = startGeoCoord;
+			reveresedTempStreetSegment.end = startGeoCoord;
 			tempStreetSegment.end = endGeoCoord;
 			reveresedTempStreetSegment.start = endGeoCoord;
 
-			vectorOfGeoCoords.push_back(startGeoCoord);
-			vectorOfGeoCoords.push_back(endGeoCoord);
-
-
-			vectorOfStreetSegments.push_back(tempStreetSegment);
-			vectorOfReversedStreetSegments.push_back(reveresedTempStreetSegment);
-
-			vector<StreetSegment> StreetSegmentsToAssociate;
-			for (int i = 0; i < vectorOfGeoCoords.size(); i++)
+			vector<StreetSegment>* segmentsAlreadyMade = GeoCoordToStreetSegmentHashMap.find(startGeoCoord);
+			if (segmentsAlreadyMade == nullptr)
 			{
-
-
-
-				//pushes street segments that have a first coord the same as the GeoCoord
-				for (int j = 0; j < vectorOfStreetSegments.size(); j++)
-				{
-					if (vectorOfStreetSegments[j].start == vectorOfGeoCoords[i])
-					{
-						StreetSegmentsToAssociate.push_back(vectorOfStreetSegments[j]);
-					}
-					//maybe we need to add if the end is the same as well?
-				}
-
-				//TODO:WE CAN'T ACCESDS AN ITEM THAT'S A NODE IN THE ARRAY IF IT'S A NEXTNODE
-				//AFTER DISCU:switch where we find which ones are the same which ones are pushed back so that this is handled in the getSegmentsThatStartWith.
-
-				//pushes reversed street segments that have a first coord the same as the GeoCoord
-				for (int j = 0; j < vectorOfReversedStreetSegments.size(); j++)
-				{
-					if (vectorOfReversedStreetSegments[j].start == vectorOfGeoCoords[i])
-					{
-						StreetSegmentsToAssociate.push_back(vectorOfReversedStreetSegments[j]);
-					}	//MAYBE COMBINE THIS WITH THE EARLIER FOR LOOP AND DO .END INSTEAD
-				}
-
+				vector<StreetSegment> startSegments;
+				startSegments.push_back(tempStreetSegment);
+				GeoCoordToStreetSegmentHashMap.associate(startGeoCoord, startSegments);
+			}
+			else
+			{
+				segmentsAlreadyMade->push_back(tempStreetSegment);
 			}
 
-			vector<StreetSegment>* returnedValueVector = GeoCoordToStreetSegmentHashMap.find(startGeoCoord);
-
-			if (returnedValueVector == nullptr)
+			vector<StreetSegment>* reversedSegmentsAlreadyMade = GeoCoordToStreetSegmentHashMap.find(endGeoCoord);
+			if (reversedSegmentsAlreadyMade == nullptr)
 			{
-
-				GeoCoordToStreetSegmentHashMap.associate(vectorOfGeoCoords[i], StreetSegmentsToAssociate);
+				vector<StreetSegment> startSegments;
+				startSegments.push_back(reveresedTempStreetSegment);
+				GeoCoordToStreetSegmentHashMap.associate(endGeoCoord, startSegments);
 			}
-			else if (returnedValueVector != nullptr)
+			else
 			{
-				for (int i = 0; i < StreetSegmentsToAssociate.size(); i++)
-				{
-					returnedValueVector->push_back(StreetSegmentsToAssociate[i]);
-				}
-				
+				reversedSegmentsAlreadyMade->push_back(reveresedTempStreetSegment);
 			}
 		}
 	}
