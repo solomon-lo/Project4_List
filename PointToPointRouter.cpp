@@ -42,7 +42,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 {
 	totalDistanceTravelled = 0;
 	vector<StreetSegment> FirstPlaceholderVectorForTesting;
-	
+
 	list<StreetSegment> routeToReverse;
 
 	m_map->getSegmentsThatStartWith(start, FirstPlaceholderVectorForTesting);
@@ -50,7 +50,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 	{
 		return BAD_COORD;
 	}
-	
+
 	vector<StreetSegment> SecondPlaceholderVectorForTesting;
 	m_map->getSegmentsThatStartWith(end, SecondPlaceholderVectorForTesting);
 	if (SecondPlaceholderVectorForTesting.empty() == true)
@@ -68,7 +68,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 	list<Node*> openList;
 	list<Node*> closedList;
 
-	Node * inputStartNode = new Node;
+	Node* inputStartNode = new Node;
 	inputStartNode->m_GeoCoord = start;
 	inputStartNode->prevGeoCoordNode = nullptr;
 	inputStartNode->fCost = 0;
@@ -77,16 +77,16 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 
 	openList.push_back(inputStartNode);
 
-	while(!openList.empty())
+	while (!openList.empty())
 	{
 		Node* currentNode = new Node;
 		double currentSmallestValue = 999;
 		int currentSmallestIndex = 0;
-		
+
 		currentNode = *openList.begin();
 		int currentNodeIndex = 0;
 		int currentIndex = 0;
-		for(auto i = openList.begin(); i!= openList.end(); i++)
+		for (auto i = openList.begin(); i != openList.end(); i++)
 		{
 			if ((*i)->fCost < currentSmallestValue)
 			{
@@ -97,8 +97,8 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			currentIndex++;
 		}
 
-		
-		for(auto deleteIterator = openList.begin(); deleteIterator != openList.end(); deleteIterator++)
+
+		for (auto deleteIterator = openList.begin(); deleteIterator != openList.end(); deleteIterator++)
 		{
 			if ((*deleteIterator)->fCost == currentSmallestValue)
 			{
@@ -107,10 +107,10 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			}
 		}
 		closedList.push_back(currentNode);
-		
 
-		
-		
+
+
+
 		//foudn goal implementation
 
 		//backtracking portion
@@ -188,7 +188,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			vectorOfChildrenPreCheck[z]->hCost = distanceEarthMiles(vectorOfChildrenPreCheck[z]->m_GeoCoord, end);
 			vectorOfChildrenPreCheck[z]->fCost = vectorOfChildrenPreCheck[z]->gCost + vectorOfChildrenPreCheck[z]->hCost;
 			vectorOfChildrenPreCheck[z]->prevGeoCoordNode = currentNode;
-			for(auto openListPos = openList.begin(); openListPos != openList.end(); openListPos++)
+			for (auto openListPos = openList.begin(); openListPos != openList.end(); openListPos++)
 			{
 				if ((*openListPos)->m_GeoCoord == vectorOfChildrenPreCheck[z]->m_GeoCoord)
 				{
@@ -201,7 +201,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			openList.push_front(vectorOfChildrenPreCheck[z]);
 		}
 
-	}	
+	}
 	return NO_ROUTE;  // Delete this line and implement this function correctly
 }
 

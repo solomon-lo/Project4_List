@@ -12,7 +12,7 @@ public:
 		const vector<DeliveryRequest>& deliveries,
 		vector<DeliveryCommand>& commands,
 		double& totalDistanceTravelled) const;
-	    
+
 private:
 	const StreetMap* m_map;
 	PointToPointRouter m_PointToPointRouter;
@@ -80,8 +80,8 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	//reverse(inputDeliveries.begin(), inputDeliveries.end());
 
 	GeoCoord startingCoord = depot;
-	m_PointToPointRouter.generatePointToPointRoute(startingCoord, inputDeliveries[0].location,  listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
-	
+	m_PointToPointRouter.generatePointToPointRoute(startingCoord, inputDeliveries[0].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+
 	//adds all of the necessary street segments to travel
 	if (inputDeliveries.size() > 1)
 	{
@@ -99,7 +99,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 
 	StreetSegment previousStreetSegment = *currentStreetSegmentIterator;
 
-	do	
+	do
 	{
 		bool wentOnSameStreet = false;
 		previousStreetSegment = *currentStreetSegmentIterator;
@@ -178,7 +178,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 
 					totalDistanceTravelled += distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end);
 					distanceAlongSameNameStreet += distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end);
-					if ((*currentStreetSegmentIterator).start == depot)
+					if ((*currentStreetSegmentIterator).end == depot)
 					{
 						return DELIVERY_SUCCESS;
 					}
@@ -205,8 +205,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 			return DELIVERY_SUCCESS;
 		}
 		//++currentStreetSegmentIterator;
-	}
-	while (currentStreetSegmentIterator != listOfStreetSegmentsInDeliveries.end());
+	} while (currentStreetSegmentIterator != listOfStreetSegmentsInDeliveries.end());
 
 	return NO_ROUTE;  // Delete this line and implement this function correctly
 }
@@ -236,5 +235,3 @@ DeliveryResult DeliveryPlanner::generateDeliveryPlan(
 {
 	return m_impl->generateDeliveryPlan(depot, deliveries, commands, totalDistanceTravelled);
 }
-
-

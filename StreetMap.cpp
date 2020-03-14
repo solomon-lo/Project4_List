@@ -13,7 +13,7 @@ using namespace std;
 //unsigned int getBucketNumber(const GeoCoord& g);
 unsigned int hasher(const GeoCoord& g)
 {
-    return hash<std::string>()(g.latitudeText + g.longitudeText);
+	return hash<std::string>()(g.latitudeText + g.longitudeText);
 }
 
 
@@ -28,7 +28,7 @@ private:
 	ExpandableHashMap<GeoCoord, vector<StreetSegment>> GeoCoordToStreetSegmentHashMap;
 
 
-	
+
 };
 
 StreetMapImpl::StreetMapImpl()
@@ -129,7 +129,7 @@ bool StreetMapImpl::load(string mapFile)
 
 			//TODO:WE CAN'T ACCESDS AN ITEM THAT'S A NODE IN THE ARRAY IF IT'S A NEXTNODE
 			//AFTER DISCU:switch where we find which ones are the same which ones are pushed back so that this is handled in the getSegmentsThatStartWith.
-			
+
 			//pushes reversed street segments that have a first coord the same as the GeoCoord
 			for (int j = 0; j < vectorOfReversedStreetSegments.size(); j++)
 			{
@@ -140,7 +140,7 @@ bool StreetMapImpl::load(string mapFile)
 			}
 
 			GeoCoordToStreetSegmentHashMap.associate(vectorOfGeoCoords[i], StreetSegmentsToAssociate);
-			
+
 		}
 
 	}
