@@ -84,9 +84,10 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	cerr << "advanced to next generate PointToPoint" << endl;
 	if (thing == NO_ROUTE)
 	{
+		cerr << "thing == no route" << endl;
 		return thing;
 	}
-	
+
 	//adds all of the necessary street segments to travel
 	if (inputDeliveries.size() > 1)
 	{
