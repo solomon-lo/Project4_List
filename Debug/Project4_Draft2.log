@@ -1,7 +1,7 @@
 ﻿  PointToPointRouter.cpp
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(135,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(166,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(175,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(134,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(165,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(174,21): warning C4018: '<': signed/unsigned mismatch
 C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(133,90): warning C4244: 'argument': conversion from 'double' to 'const unsigned int', possible loss of data
 C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(127): message : while compiling class template member function 'void ExpandableHashMap<GeoCoord,GeoCoord>::associate(const KeyType &,const ValueType &)'
 C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(127): message :         with
@@ -9,11 +9,11 @@ C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashM
 C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(127): message :             KeyType=GeoCoord,
 C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(127): message :             ValueType=GeoCoord
 C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(127): message :         ]
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(125): message : see reference to function template instantiation 'void ExpandableHashMap<GeoCoord,GeoCoord>::associate(const KeyType &,const ValueType &)' being compiled
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(125): message :         with
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(125): message :         [
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(125): message :             KeyType=GeoCoord,
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(125): message :             ValueType=GeoCoord
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(125): message :         ]
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(121): message : see reference to class template instantiation 'ExpandableHashMap<GeoCoord,GeoCoord>' being compiled
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(124): message : see reference to function template instantiation 'void ExpandableHashMap<GeoCoord,GeoCoord>::associate(const KeyType &,const ValueType &)' being compiled
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(124): message :         with
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(124): message :         [
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(124): message :             KeyType=GeoCoord,
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(124): message :             ValueType=GeoCoord
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(124): message :         ]
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(120): message : see reference to class template instantiation 'ExpandableHashMap<GeoCoord,GeoCoord>' being compiled
   Project4_Draft2.vcxproj -> C:\Users\Solomon Lo\source\repos\Project4_Draft2\Debug\Project4_Draft2.exe

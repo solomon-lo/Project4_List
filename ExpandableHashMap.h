@@ -153,7 +153,7 @@ void ExpandableHashMap<KeyType, ValueType>::associate(const KeyType& key, const 
 		}
 
 		//unsigned int getBucketNumber(const KeyType & k);
-		int insertBucketHash = getBucketNumber(key);
+		int insertBucketHash = getModifiedBucketNumber(key, vectorOfLists.size());
 
 		vectorOfLists[insertBucketHash].emplace_back(key, value);
 		m_numOfAssociations++;
@@ -168,7 +168,7 @@ template<typename KeyType, typename ValueType>
 const ValueType* ExpandableHashMap<KeyType, ValueType>::find(const KeyType& key) const	//TODO:CHANGE BACK TO "KeyType&" instead of "string"
 {
 	//unsigned int getBucketNumber(const KeyType & k);
-	unsigned int findIndex = getBucketNumber(key);
+	unsigned int findIndex = getModifiedBucketNumber(key, vectorOfLists.size());
 	if (vectorOfLists[findIndex].empty())
 	{
 		return nullptr;

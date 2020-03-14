@@ -141,7 +141,6 @@ bool StreetMapImpl::load(string mapFile)
 			}
 
 			GeoCoordToStreetSegmentHashMap.associate(vectorOfGeoCoords[i], StreetSegmentsToAssociate);
-
 		}
 
 	}
