@@ -102,15 +102,23 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	do
 	{
 		bool wentOnSameStreet = false;
-		previousStreetSegment = *currentStreetSegmentIterator;
-		currentStreetSegmentIterator++;
+		bool alreadyDelivered = false;
+		if (currentStreetSegmentIterator->start == inputDeliveries[whichDelivery].location)
+		{
+			alreadyDelivered = true;
+			DeliveryCommand toPushAsDelivery;
+			toPushAsDelivery.initAsDeliverCommand(inputDeliveries[whichDelivery].item);
+			commands.push_back(toPushAsDelivery);
+			continue;
+		}
+		
 
 		//if (startSegment.start == depot)
 		//{
 		//	cerr << "reached depot at the top" << endl;
 		//	return DELIVERY_SUCCESS;
 		//}
-		bool alreadyDelivered = false;
+
 		if (currentStreetSegmentIterator->start == inputDeliveries[whichDelivery].location)
 		{
 			alreadyDelivered = true;
@@ -206,7 +214,9 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 			totalDistanceTravelled += distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end);
 			return DELIVERY_SUCCESS;
 		}
-		//++currentStreetSegmentIterator;
+		previousStreetSegment = *currentStreetSegmentIterator;
+
+		currentStreetSegmentIterator++;
 	} while (currentStreetSegmentIterator != listOfStreetSegmentsInDeliveries.end());
 
 	return NO_ROUTE;  // Delete this line and implement this function correctly

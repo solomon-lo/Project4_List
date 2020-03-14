@@ -91,21 +91,21 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			if ((*i)->fCost < currentSmallestValue)
 			{
 				currentSmallestValue = (*i)->fCost;
+				cerr << "current smallest fCost" << (*i)->fCost << endl;
 				currentNode = *i;
 				currentNodeIndex = currentIndex;
 			}
 			currentIndex++;
 		}
 
-
-		for (auto deleteIterator = openList.begin(); deleteIterator != openList.end(); deleteIterator++)
+		
+		auto deleteIterator = openList.begin();
+		for (int i = 0; i < currentNodeIndex; i++)
 		{
-			if ((*deleteIterator)->fCost == currentSmallestValue)
-			{
-				openList.erase(deleteIterator);
-				break;
-			}
+			deleteIterator++;
 		}
+		cerr << "test of fcost" << (*deleteIterator)->fCost << endl;
+		openList.erase(deleteIterator);
 		closedList.push_back(currentNode);
 
 
@@ -116,6 +116,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		//backtracking portion
 		if (currentNode->m_GeoCoord == end)	//in morning: this is never returned as true.
 		{
+			cerr << "entered backtracking portion" << endl;
 			ExpandableHashMap<GeoCoord, GeoCoord> storageOfStreetSegmentReturns;
 			cerr << "finally found the end" << endl;
 			while (currentNode->m_GeoCoord != start)
@@ -127,10 +128,12 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			currentNode->m_GeoCoord = end;
 			while (currentNode->m_GeoCoord != start)
 			{
+				cerr << "entered while (currentNode->m_GeoCoord != start)" << endl;
 				vector<StreetSegment> tempStreetSegmentReturns;
 				m_map->getSegmentsThatStartWith(currentNode->m_GeoCoord, tempStreetSegmentReturns);
 				for (int i = 0; i < tempStreetSegmentReturns.size(); i++)
 				{
+					cerr << "for (int i = 0; i < tempStreetSegmentReturns.size(); i++)" << endl;
 					if (tempStreetSegmentReturns[i].end == *(storageOfStreetSegmentReturns.find(currentNode->m_GeoCoord)))
 					{
 						StreetSegment reversedInOrderToPush;
@@ -155,25 +158,25 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		//END OF THE IF STATEMENT
 		//Generate children
 
-		vector<StreetSegment> vectorOfPreChildrenStreetSegments;
-		vector<Node*> vectorOfChildrenPreCheck;
+		vector<StreetSegment> childrenStreetSegments;
+		vector<Node*> vectorOfNodePointerToChildren;
 
-		m_map->getSegmentsThatStartWith(currentNode->m_GeoCoord, vectorOfPreChildrenStreetSegments);
-		for (int i = 0; i < vectorOfPreChildrenStreetSegments.size(); ++i)
+		m_map->getSegmentsThatStartWith(currentNode->m_GeoCoord, childrenStreetSegments);
+		for (int i = 0; i < childrenStreetSegments.size(); ++i)
 		{
 			Node* childEndNode = new Node;
-			childEndNode->m_GeoCoord = vectorOfPreChildrenStreetSegments[i].end;
-			childEndNode->prevGeoCoordNode = (currentNode);	//prevGeoCoordNode
-			vectorOfChildrenPreCheck.push_back(childEndNode);
+			childEndNode->m_GeoCoord = childrenStreetSegments[i].end;
+			//childEndNode->prevGeoCoordNode = (currentNode);	//prevGeoCoordNode
+			vectorOfNodePointerToChildren.push_back(childEndNode);
 		}
 
 		//start of: for each child in the children
-		for (int z = 0; z != vectorOfChildrenPreCheck.size(); ++z)
+		for (int z = 0; z != vectorOfNodePointerToChildren.size(); ++z)
 		{
 			bool childPreCheckFoundInClosedList = false;
 			for (auto y = closedList.begin(); y != closedList.end(); ++y)
 			{
-				if ((*y)->m_GeoCoord == vectorOfChildrenPreCheck[z]->m_GeoCoord)
+				if ((*y)->m_GeoCoord == vectorOfNodePointerToChildren[z]->m_GeoCoord)
 				{
 					childPreCheckFoundInClosedList = true;
 					break;
@@ -184,21 +187,26 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 				continue;
 			}
 
-			vectorOfChildrenPreCheck[z]->gCost = currentNode->gCost + distanceEarthMiles(vectorOfChildrenPreCheck[z]->m_GeoCoord, currentNode->m_GeoCoord);
-			vectorOfChildrenPreCheck[z]->hCost = distanceEarthMiles(vectorOfChildrenPreCheck[z]->m_GeoCoord, end);
-			vectorOfChildrenPreCheck[z]->fCost = vectorOfChildrenPreCheck[z]->gCost + vectorOfChildrenPreCheck[z]->hCost;
-			vectorOfChildrenPreCheck[z]->prevGeoCoordNode = currentNode;
+			vectorOfNodePointerToChildren[z]->gCost = currentNode->gCost + distanceEarthMiles(vectorOfNodePointerToChildren[z]->m_GeoCoord, currentNode->m_GeoCoord);
+			vectorOfNodePointerToChildren[z]->hCost = distanceEarthMiles(vectorOfNodePointerToChildren[z]->m_GeoCoord, end);
+			vectorOfNodePointerToChildren[z]->fCost = vectorOfNodePointerToChildren[z]->gCost + vectorOfNodePointerToChildren[z]->hCost;
+			vectorOfNodePointerToChildren[z]->prevGeoCoordNode = currentNode;
+			bool needToSkip = false;
 			for (auto openListPos = openList.begin(); openListPos != openList.end(); openListPos++)
 			{
-				if ((*openListPos)->m_GeoCoord == vectorOfChildrenPreCheck[z]->m_GeoCoord)
+				if ((*openListPos)->m_GeoCoord == vectorOfNodePointerToChildren[z]->m_GeoCoord)
 				{
-					if ((vectorOfChildrenPreCheck[z]->gCost > (*openListPos)->gCost))
+					if ((vectorOfNodePointerToChildren[z]->gCost > (*openListPos)->gCost))
 					{
-						continue;
+						needToSkip = true;
 					}
 				}
 			}
-			openList.push_front(vectorOfChildrenPreCheck[z]);
+			if (!needToSkip)
+			{
+				openList.push_front(vectorOfNodePointerToChildren[z]);
+			}
+			
 		}
 
 	}
