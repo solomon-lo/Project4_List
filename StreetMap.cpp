@@ -39,6 +39,7 @@ StreetMapImpl::~StreetMapImpl()
 {
 }
 
+//this loads the text file into the expandableHashMap
 bool StreetMapImpl::load(string mapFile)
 {
 	ifstream infile(mapFile);
@@ -60,6 +61,7 @@ bool StreetMapImpl::load(string mapFile)
 		cerr << tempStreetSegment.name << endl;
 
 
+		//this gets the number of street segments that the street has
 		int numOfSegmentsOnStreet = 0;
 		infile >> numOfSegmentsOnStreet;
 		infile.ignore(10000, '\n');
@@ -87,6 +89,7 @@ bool StreetMapImpl::load(string mapFile)
 				// While there is more to read 
 			} while (ss);
 
+			//once the values are taken and put into variables, Geocoords can be created
 			string X_X_ForStartCoord = numbers[0];
 			string Y_Y_ForStartCoord = numbers[1];
 
@@ -103,7 +106,8 @@ bool StreetMapImpl::load(string mapFile)
 			tempStreetSegment.end = endGeoCoord;
 			reveresedTempStreetSegment.start = endGeoCoord;
 
-
+			//if there is already existing segments, just add to them. Otherwise, just make the association with just the newly created
+			//streetsegments
 			vector<StreetSegment>* segmentsAlreadyMade = GeoCoordToStreetSegmentHashMap.find(startGeoCoord);
 			if (segmentsAlreadyMade == nullptr)
 			{
@@ -118,6 +122,8 @@ bool StreetMapImpl::load(string mapFile)
 				GeoCoordToStreetSegmentHashMap.associate(startGeoCoord, newVectorOfStreetSegments);
 			}
 
+			//this part is used for the reversed streetsegments which also must be created
+			//and put into the expandableHashMap
 			vector<StreetSegment>* reversedSegmentsAlreadyMade = GeoCoordToStreetSegmentHashMap.find(endGeoCoord);
 			if (reversedSegmentsAlreadyMade == nullptr)
 			{

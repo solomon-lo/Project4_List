@@ -76,7 +76,25 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	vector<DeliveryCommand>& commands,
 	double& totalDistanceTravelled) const
 {
+	vector<StreetSegment> testVector;
+	m_map->getSegmentsThatStartWith(depot, testVector);
+	if (testVector.empty())
+	{
+		return BAD_COORD;
+	}
 
+	for (int i = 0; i < deliveries.size(); ++i)
+	{
+		vector<StreetSegment> inspectVector;
+		m_map->getSegmentsThatStartWith(deliveries[i].location, inspectVector);
+		if (testVector.empty())
+		{
+			return BAD_COORD;
+		}
+	}
+
+
+	//this is used to call the optimzieDeliveryOrder, which changes th order so less distance has to be traveled
 	DeliveryOptimizer m_DeliveryOptimizer(m_map);
 	double oldCrowDistance;
 	double newCrowDistance;
@@ -85,6 +103,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	totalDistanceTravelled = 0;
 	list<StreetSegment> listOfStreetSegmentsInDeliveries;
 
+	//this generates the street segments from each point to the next
 	GeoCoord startingCoord = depot;
 	m_PointToPointRouter.generatePointToPointRoute(startingCoord, inputDeliveries[0].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
 	cerr << "generated for depot to " << inputDeliveries[0].item << endl;
@@ -99,6 +118,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 		}
 	}
 
+	//this goes back to the depot
 	m_PointToPointRouter.generatePointToPointRoute(inputDeliveries[inputDeliveries.size() - 1].location, depot, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
 	cerr << "generated for" << inputDeliveries[inputDeliveries.size() - 1].item << " to " << "depot " << endl;
 	int whichDelivery = 0;
@@ -109,6 +129,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 
 	currentStreetSegmentIterator++;
 
+	//this is the first proceed from the depot
 	double distanceAlongSameNameStreet = distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
 	double angleOfStartSegment = angleOfLine(*currentStreetSegmentIterator);
 	string directionForProceedCommand;
@@ -118,12 +139,14 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	topush.initAsProceedCommand(directionForProceedCommand, previousStreetSegment.name, distanceAlongSameNameStreet);
 	commands.push_back(topush);
 
+	//whle there are still street segments to traverse
 	while (currentStreetSegmentIterator != listOfStreetSegmentsInDeliveries.end())
 	{
 
 		bool alreadyDelivered = false;
 		bool wentOnSameStreet = false;
 
+		//this initiates a delivery if it detects its at a delivery location
 		if (currentStreetSegmentIterator->start == inputDeliveries[whichDelivery].location)
 		{
 			alreadyDelivered = true;
@@ -135,7 +158,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 				whichDelivery++;
 			}
 		}
-
+		//if they are different names, that means we must turn or proceed
 		if (previousStreetSegment.name != currentStreetSegmentIterator->name && !(alreadyDelivered))
 		{
 			double angleBetweenDifferentNameSegments = angleBetween2Lines(previousStreetSegment, *currentStreetSegmentIterator);
@@ -153,6 +176,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 				commands.push_back(toPushAsProceed);
 			}
 
+			//this part decides whether we take a left or right turn
 			else if (angleBetweenDifferentNameSegments >= 1.00 && angleBetweenDifferentNameSegments < 180.000)
 			{
 
@@ -170,7 +194,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 			}
 		}
 
-
+		//if they are different names, we can initialzie a proceed to the street segment with the new name
 		if (previousStreetSegment.name != (*currentStreetSegmentIterator).name)
 		{
 			double distanceAlongSameNameStreet = distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
@@ -182,6 +206,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 			topush.initAsProceedCommand(directionForProceedCommand, previousStreetSegment.name, distanceAlongSameNameStreet);
 			commands.push_back(topush);
 		}
+		//this part doesn't run if we already have delivered, since delivery blocks us from certain actions
 		else if (alreadyDelivered)
 		{
 			double distanceAlongSameNameStreet = distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
@@ -204,7 +229,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 		alreadyDelivered = false;
 	}
 
-	return DELIVERY_SUCCESS;  // Delete this line and implement this function correctly
+	return DELIVERY_SUCCESS;  
 }
 
 
