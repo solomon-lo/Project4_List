@@ -91,14 +91,10 @@ bool StreetMapImpl::load(string mapFile)
 			string Y_Y_ForStartCoord = numbers[1];
 
 			GeoCoord startGeoCoord(X_X_ForStartCoord, Y_Y_ForStartCoord);
-
-
-
-
-
 			string X_X_ForEndingCoord = numbers[2];
 			string Y_Y_ForEndingCoord = numbers[3];
 
+			
 
 			GeoCoord endGeoCoord(X_X_ForEndingCoord, Y_Y_ForEndingCoord);
 
@@ -106,6 +102,7 @@ bool StreetMapImpl::load(string mapFile)
 			reveresedTempStreetSegment.end = startGeoCoord;
 			tempStreetSegment.end = endGeoCoord;
 			reveresedTempStreetSegment.start = endGeoCoord;
+
 
 			vector<StreetSegment>* segmentsAlreadyMade = GeoCoordToStreetSegmentHashMap.find(startGeoCoord);
 			if (segmentsAlreadyMade == nullptr)
@@ -116,7 +113,9 @@ bool StreetMapImpl::load(string mapFile)
 			}
 			else
 			{
-				segmentsAlreadyMade->push_back(tempStreetSegment);
+				vector<StreetSegment> newVectorOfStreetSegments = *segmentsAlreadyMade;
+				newVectorOfStreetSegments.push_back(tempStreetSegment);
+				GeoCoordToStreetSegmentHashMap.associate(startGeoCoord, newVectorOfStreetSegments);
 			}
 
 			vector<StreetSegment>* reversedSegmentsAlreadyMade = GeoCoordToStreetSegmentHashMap.find(endGeoCoord);
@@ -128,7 +127,9 @@ bool StreetMapImpl::load(string mapFile)
 			}
 			else
 			{
-				reversedSegmentsAlreadyMade->push_back(reveresedTempStreetSegment);
+				vector<StreetSegment> newVectorOfStreetSegments = *reversedSegmentsAlreadyMade;
+				newVectorOfStreetSegments.push_back(reveresedTempStreetSegment);
+				GeoCoordToStreetSegmentHashMap.associate(endGeoCoord, newVectorOfStreetSegments);
 			}
 		}
 	}
