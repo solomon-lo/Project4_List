@@ -16,6 +16,7 @@ public:
 private:
 	const StreetMap* m_map;
 	PointToPointRouter m_PointToPointRouter;
+	
 	void getCardinalConversion(double angleOfStartSegment, string& directionForProceedCommand) const
 	{
 		if (0.00 <= angleOfStartSegment && angleOfStartSegment < 22.5)
@@ -75,8 +76,13 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	vector<DeliveryCommand>& commands,
 	double& totalDistanceTravelled) const
 {
-	totalDistanceTravelled = 0;
+
+	DeliveryOptimizer m_DeliveryOptimizer(m_map);
+	double oldCrowDistance;
+	double newCrowDistance;
 	vector<DeliveryRequest> inputDeliveries = deliveries;
+	m_DeliveryOptimizer.optimizeDeliveryOrder(depot, inputDeliveries, oldCrowDistance, newCrowDistance);
+	totalDistanceTravelled = 0;
 	list<StreetSegment> listOfStreetSegmentsInDeliveries;
 
 	GeoCoord startingCoord = depot;
@@ -187,7 +193,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 			topush.initAsProceedCommand(directionForProceedCommand, previousStreetSegment.name, distanceAlongSameNameStreet);
 			commands.push_back(topush);
 		}
-		else if(!alreadyDelivered)
+		else if (!alreadyDelivered)
 		{
 			double distanceAlongSameNameStreet = distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
 			commands[commands.size() - 1].increaseDistance(distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end));
@@ -196,7 +202,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 		previousStreetSegment = *currentStreetSegmentIterator;
 		currentStreetSegmentIterator++;
 		alreadyDelivered = false;
-	} 
+	}
 
 	return DELIVERY_SUCCESS;  // Delete this line and implement this function correctly
 }

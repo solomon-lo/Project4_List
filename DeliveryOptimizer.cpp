@@ -28,8 +28,7 @@ void DeliveryOptimizerImpl::optimizeDeliveryOrder(
 	double& oldCrowDistance,
 	double& newCrowDistance) const
 {
-
-	//calculates the old crows distance using the given order
+	oldCrowDistance = 0;
 	oldCrowDistance += distanceEarthMiles(depot, deliveries[0].location);
 	for (int i = 0; i < deliveries.size() - 1; i++)
 	{
@@ -37,51 +36,63 @@ void DeliveryOptimizerImpl::optimizeDeliveryOrder(
 	}
 	oldCrowDistance += distanceEarthMiles(deliveries[deliveries.size() - 1].location, depot);
 
-	vector<DeliveryRequest> preGreedyPoint = deliveries;
-	int smallestIndex = 0;
-	int smallestDistanceCrow = 9999999999999;
-	for (int i = 0; i < preGreedyPoint.size(); i++)
+	int compareDistance = 9999999;
+	do
 	{
-		if (distanceEarthMiles(preGreedyPoint[i].location, depot) < smallestDistanceCrow)
-		{
-			smallestIndex = i;
-			smallestDistanceCrow = distanceEarthMiles(preGreedyPoint[i].location, depot);
-		}
-	}
-
-	vector<DeliveryRequest> postGreedy;
-	postGreedy.push_back(preGreedyPoint[smallestIndex]);
-
-	while (preGreedyPoint.empty() == false)
-	{
-		int indexTracker = 0;
-		int currentSmallestCrow = 999999999;
+		vector<DeliveryRequest> preGreedyPoint = deliveries;
+		int smallestIndex = 0;
+		int smallestDistanceCrow = 9999999999999;
 		for (int i = 0; i < preGreedyPoint.size(); i++)
 		{
 			if (distanceEarthMiles(preGreedyPoint[i].location, depot) < smallestDistanceCrow)
 			{
 				smallestIndex = i;
-				smallestDistanceCrow = distanceEarthMiles(preGreedyPoint[i].location, postGreedy[postGreedy.size() - 1].location);
+				smallestDistanceCrow = distanceEarthMiles(preGreedyPoint[i].location, depot);
 			}
 		}
+
 		vector<DeliveryRequest> postGreedy;
 		postGreedy.push_back(preGreedyPoint[smallestIndex]);
-		auto itr = preGreedyPoint.begin();
-		for (int i = 0; i < indexTracker; i++)
+
+		while (preGreedyPoint.empty() == false)
 		{
-			++itr;
+			int indexTracker = 0;
+			int currentSmallestCrow = 999999999;
+			for (int i = 0; i < preGreedyPoint.size(); i++)
+			{
+				if (distanceEarthMiles(preGreedyPoint[i].location, depot) < smallestDistanceCrow)
+				{
+					smallestIndex = i;
+					smallestDistanceCrow = distanceEarthMiles(preGreedyPoint[i].location, postGreedy[postGreedy.size() - 1].location);
+				}
+			}
+			vector<DeliveryRequest> postGreedy;
+			postGreedy.push_back(preGreedyPoint[smallestIndex]);
+
+			auto itr = preGreedyPoint.begin();
+			for (int i = 0; i < indexTracker; i++)
+			{
+				++itr;
+			}
+			preGreedyPoint.erase(itr);
 		}
-		postGreedy.erase(itr);
-	}
 
+		compareDistance = 0;
+		compareDistance += distanceEarthMiles(depot, postGreedy[0].location);
+		for (int i = 0; i < postGreedy.size() - 1; i++)
+		{
+			compareDistance += distanceEarthMiles(postGreedy[i].location, postGreedy[i + 1].location);
+		}
+		compareDistance += distanceEarthMiles(postGreedy[postGreedy.size() - 1].location, depot);
 
-	deliveries = postGreedy;
-	newCrowDistance += distanceEarthMiles(depot, deliveries[0].location);
-	for (int i = 0; i < deliveries.size() - 1; i++)
-	{
-		newCrowDistance += distanceEarthMiles(deliveries[i].location, deliveries[i + 1].location);
-	}
-	newCrowDistance += distanceEarthMiles(deliveries[deliveries.size() - 1].location, depot);
+		if (compareDistance < oldCrowDistance)
+		{
+			deliveries = postGreedy;
+			newCrowDistance = compareDistance;
+		}
+
+	} while (compareDistance > oldCrowDistance);
+
 }
 
 //******************** DeliveryOptimizer functions ****************************

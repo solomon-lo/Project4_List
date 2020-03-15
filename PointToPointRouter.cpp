@@ -59,7 +59,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 	m_map->getSegmentsThatStartWith(end, SecondPlaceholderVectorForTesting);
 	if (SecondPlaceholderVectorForTesting.empty() == true)
 	{
-		
+
 		return BAD_COORD;
 	}
 
@@ -70,11 +70,11 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		route.clear();
 		return DELIVERY_SUCCESS;
 	}
-	
+
 	//A* implementation, this is needed as the two lists
 	list<Node*> openList;
 	list<Node*> closedList;
-	
+
 	//pushes in the start aas the new node
 	Node* inputStartNode = new Node;
 	inputStartNode->m_GeoCoord = start;
@@ -84,14 +84,12 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 	inputStartNode->hCost = 0;
 	openList.push_back(inputStartNode);
 
-	
+
 	while (!openList.empty())
 	{
-		Node * currentNode = *openList.begin();
+		Node* currentNode = *openList.begin();
 		double currentSmallestValue = 999;
 		int currentSmallestIndex = 0;
-
-		currentNode = *openList.begin();
 		int currentIndex = 0;
 
 		//finds the smallest fCost n the openList
@@ -114,12 +112,12 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		{
 			++it;
 		}
-		closedList.push_back(currentNode);
+		closedList.push_back(*it);
 		openList.erase(it);
 
 
 		//ran when we have reached our goal, and we need to start backtracking
-		if (currentNode->m_GeoCoord == end)	
+		if (currentNode->m_GeoCoord == end)
 		{
 			ExpandableHashMap<GeoCoord, GeoCoord> storageOfStreetSegmentReturns;
 			cerr << "finally found the end" << endl;
@@ -187,9 +185,9 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			childEndNode.prevGeoCoordNode = currentNode;	//prevGeoCoordNode
 			vectorOfChildrenNodes.push_back(childEndNode);
 		}
-		
+
 		//deletes the dynamically allocated elements in vectorOfChildrenNodes
-		
+
 		//start of: for each child in the children
 		for (int z = 0; z != vectorOfChildrenNodes.size(); ++z)
 		{
@@ -223,7 +221,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			{
 				if (((*openListPos)->m_GeoCoord == toPushIntoOpenList->m_GeoCoord) && ((toPushIntoOpenList->gCost > (*openListPos)->gCost)))
 				{
-					
+
 					needToSkip = true;
 				}
 			}
@@ -236,6 +234,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		}
 	}
 
+	//deallocates all of the used memory before it returns
 	for (auto itr = openList.begin(); itr != openList.end(); ++itr)
 	{
 		Node* child = *itr;
