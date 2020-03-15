@@ -75,30 +75,26 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	vector<DeliveryCommand>& commands,
 	double& totalDistanceTravelled) const
 {
+	totalDistanceTravelled = 0;
 	vector<DeliveryRequest> inputDeliveries = deliveries;
 	list<StreetSegment> listOfStreetSegmentsInDeliveries;
-	//reverse(inputDeliveries.begin(), inputDeliveries.end());
 
 	GeoCoord startingCoord = depot;
-	DeliveryResult thing = m_PointToPointRouter.generatePointToPointRoute(startingCoord, inputDeliveries[0].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
-	cerr << "advanced to next generate PointToPoint" << endl;
-	if (thing == NO_ROUTE)
-	{
-		cerr << "thing == no route" << endl;
-		return thing;
-	}
+	m_PointToPointRouter.generatePointToPointRoute(startingCoord, inputDeliveries[0].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+	cerr << "generated for depot to " << inputDeliveries[0].item << endl;
 
 	//adds all of the necessary street segments to travel
 	if (inputDeliveries.size() > 1)
 	{
-		for (int i = 0; i < inputDeliveries.size() - 2; i++)
+		for (int i = 0; i < inputDeliveries.size() - 1; i++)
 		{
 			m_PointToPointRouter.generatePointToPointRoute(inputDeliveries[i].location, inputDeliveries[i + 1].location, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
+			cerr << "generated for" << inputDeliveries[i].item << " to " << inputDeliveries[i + 1].item << endl;
 		}
 	}
 
 	m_PointToPointRouter.generatePointToPointRoute(inputDeliveries[inputDeliveries.size() - 1].location, depot, listOfStreetSegmentsInDeliveries, totalDistanceTravelled);
-
+	cerr << "generated for" << inputDeliveries[inputDeliveries.size() - 1].item << " to " << "depot " << endl;
 	int whichDelivery = 0;
 
 	auto currentStreetSegmentIterator = listOfStreetSegmentsInDeliveries.begin();
@@ -108,7 +104,6 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 	currentStreetSegmentIterator++;
 
 	double distanceAlongSameNameStreet = distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
-	totalDistanceTravelled += distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
 	double angleOfStartSegment = angleOfLine(*currentStreetSegmentIterator);
 	string directionForProceedCommand;
 
@@ -144,7 +139,7 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 				DeliveryCommand toPushAsProceed;
 
 				double angleBetweenBothSegments = angleBetween2Lines(previousStreetSegment, *currentStreetSegmentIterator);
-				double distanceBetweenBothSegments = distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end) + distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end);
+				double distanceBetweenBothSegments = distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
 
 				string cardinalForProceed;
 				getCardinalConversion(angleBetweenBothSegments, cardinalForProceed);
@@ -172,8 +167,6 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 
 		if (previousStreetSegment.name != (*currentStreetSegmentIterator).name)
 		{
-
-			totalDistanceTravelled += distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
 			double distanceAlongSameNameStreet = distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
 			double angleOfStartSegment = angleOfLine(*currentStreetSegmentIterator);
 			string directionForProceedCommand;
@@ -185,7 +178,6 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 		}
 		else if (alreadyDelivered)
 		{
-			totalDistanceTravelled += distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
 			double distanceAlongSameNameStreet = distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
 			double angleOfStartSegment = angleOfLine(*currentStreetSegmentIterator);
 			string directionForProceedCommand;
@@ -197,7 +189,6 @@ DeliveryResult DeliveryPlannerImpl::generateDeliveryPlan(
 		}
 		else if(!alreadyDelivered)
 		{
-			totalDistanceTravelled += distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
 			double distanceAlongSameNameStreet = distanceEarthMiles(previousStreetSegment.start, previousStreetSegment.end);
 			commands[commands.size() - 1].increaseDistance(distanceEarthMiles(currentStreetSegmentIterator->start, currentStreetSegmentIterator->end));
 		}

@@ -35,5 +35,8 @@
     <ClCompile Include="DeliveryPlanner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DeliveryOptimizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

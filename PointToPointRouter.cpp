@@ -3,6 +3,8 @@
 #include <list>
 using namespace std;
 
+
+
 class PointToPointRouterImpl
 {
 public:
@@ -23,6 +25,15 @@ private:
 		double hCost = 0;
 		double fCost = 0;
 	};
+
+	void deleteDynamicNodes(list<Node*> inputList)
+	{
+		for (auto it = inputList.begin(); it != inputList.end(); ++it)
+		{
+			delete *it;
+		}
+
+	}
 };
 
 PointToPointRouterImpl::PointToPointRouterImpl(const StreetMap* sm)
@@ -40,7 +51,6 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 	list<StreetSegment>& route,
 	double& totalDistanceTravelled) const
 {
-	totalDistanceTravelled = 0;
 	vector<StreetSegment> FirstPlaceholderVectorForTesting;
 
 	list<StreetSegment> routeToReverse;
@@ -55,6 +65,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 	m_map->getSegmentsThatStartWith(end, SecondPlaceholderVectorForTesting);
 	if (SecondPlaceholderVectorForTesting.empty() == true)
 	{
+		
 		return BAD_COORD;
 	}
 
@@ -64,7 +75,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		route.clear();
 		return DELIVERY_SUCCESS;
 	}
-
+	
 	list<Node*> openList;
 	list<Node*> closedList;
 
@@ -74,12 +85,12 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 	inputStartNode->fCost = 0;
 	inputStartNode->gCost = 0;
 	inputStartNode->hCost = 0;
-
 	openList.push_back(inputStartNode);
 
+	
 	while (!openList.empty())
 	{
-		Node* currentNode = new Node;
+		Node * currentNode = *openList.begin();
 		double currentSmallestValue = 999;
 		int currentSmallestIndex = 0;
 
@@ -115,6 +126,7 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			cerr << "finally found the end" << endl;
 			while (!(currentNode->m_GeoCoord == start))
 			{
+				totalDistanceTravelled += distanceEarthMiles(currentNode->m_GeoCoord, currentNode->prevGeoCoordNode->m_GeoCoord);
 				storageOfStreetSegmentReturns.associate(currentNode->m_GeoCoord, currentNode->prevGeoCoordNode->m_GeoCoord);
 				currentNode = currentNode->prevGeoCoordNode;
 			}
@@ -145,6 +157,16 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			{
 				route.push_back(*it);
 			}
+			for (auto itr = openList.begin(); itr != openList.end(); ++itr)
+			{
+				Node* child = *itr;
+				delete child;
+			}
+			for (auto itr = closedList.begin(); itr != closedList.end(); ++itr)
+			{
+				Node* child = *itr;
+				delete child;
+			}
 			return DELIVERY_SUCCESS;
 		}
 
@@ -152,24 +174,26 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 		//Generate children
 
 		vector<StreetSegment> vectorOfPreChildrenStreetSegments;
-		vector<Node*> vectorOfNodePointerToChildren;
+		vector<Node> vectorOfNodePointerToChildren;
 
 		m_map->getSegmentsThatStartWith(currentNode->m_GeoCoord, vectorOfPreChildrenStreetSegments);
 		for (int i = 0; i < vectorOfPreChildrenStreetSegments.size(); ++i)
 		{
-			Node* childEndNode = new Node;
-			childEndNode->m_GeoCoord = vectorOfPreChildrenStreetSegments[i].end;
-			childEndNode->prevGeoCoordNode = (currentNode);	//prevGeoCoordNode
+			Node childEndNode;
+			childEndNode.m_GeoCoord = vectorOfPreChildrenStreetSegments[i].end;
+			childEndNode.prevGeoCoordNode = currentNode;	//prevGeoCoordNode
 			vectorOfNodePointerToChildren.push_back(childEndNode);
 		}
-
+		
+		//deletes the dynamically allocated elements in vectorOfNodePointerToChildren
+		
 		//start of: for each child in the children
 		for (int z = 0; z != vectorOfNodePointerToChildren.size(); ++z)
 		{
 			bool childPreCheckFoundInClosedList = false;
 			for (auto y = closedList.begin(); y != closedList.end(); ++y)
 			{
-				if ((*y)->m_GeoCoord == vectorOfNodePointerToChildren[z]->m_GeoCoord)
+				if ((*y)->m_GeoCoord == vectorOfNodePointerToChildren[z].m_GeoCoord)
 				{
 					childPreCheckFoundInClosedList = true;
 				}
@@ -178,27 +202,39 @@ DeliveryResult PointToPointRouterImpl::generatePointToPointRoute(
 			{
 				continue;
 			}
-
-			vectorOfNodePointerToChildren[z]->gCost = currentNode->gCost + distanceEarthMiles(vectorOfNodePointerToChildren[z]->m_GeoCoord, currentNode->m_GeoCoord);
-			vectorOfNodePointerToChildren[z]->hCost = distanceEarthMiles(vectorOfNodePointerToChildren[z]->m_GeoCoord, end);
-			vectorOfNodePointerToChildren[z]->fCost = vectorOfNodePointerToChildren[z]->gCost + vectorOfNodePointerToChildren[z]->hCost;
-			vectorOfNodePointerToChildren[z]->prevGeoCoordNode = currentNode;
+			Node* toPushIntoOpenList = new Node;
+			toPushIntoOpenList->gCost = currentNode->gCost + distanceEarthMiles(vectorOfNodePointerToChildren[z].m_GeoCoord, currentNode->m_GeoCoord);
+			toPushIntoOpenList->hCost = distanceEarthMiles(vectorOfNodePointerToChildren[z].m_GeoCoord, end);
+			toPushIntoOpenList->fCost = vectorOfNodePointerToChildren[z].gCost + vectorOfNodePointerToChildren[z].hCost;
+			toPushIntoOpenList->prevGeoCoordNode = currentNode;
+			toPushIntoOpenList->m_GeoCoord = vectorOfNodePointerToChildren[z].m_GeoCoord;
 			bool needToSkip = false;
 			for (auto openListPos = openList.begin(); openListPos != openList.end(); openListPos++)
 			{
-				if (((*openListPos)->m_GeoCoord == vectorOfNodePointerToChildren[z]->m_GeoCoord) && ((vectorOfNodePointerToChildren[z]->gCost > (*openListPos)->gCost)))
+				if (((*openListPos)->m_GeoCoord == toPushIntoOpenList->m_GeoCoord) && ((toPushIntoOpenList->gCost > (*openListPos)->gCost)))
 				{
+					
 					needToSkip = true;
 				}
 			}
 			if (needToSkip)
 			{
+				delete toPushIntoOpenList;
 				continue;
 			}
-			openList.push_front(vectorOfNodePointerToChildren[z]);
+			openList.push_front(toPushIntoOpenList);
 		}
+	}
 
-		
+	for (auto itr = openList.begin(); itr != openList.end(); ++itr)
+	{
+		Node* child = *itr;
+		delete child;
+	}
+	for (auto itr = closedList.begin(); itr != closedList.end(); ++itr)
+	{
+		Node* child = *itr;
+		delete child;
 	}
 	return NO_ROUTE;  // Delete this line and implement this function correctly
 }

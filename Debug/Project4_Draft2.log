@@ -1,3 +1,27 @@
-﻿  DeliveryPlanner.cpp
-C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\DeliveryPlanner.cpp(94,21): warning C4018: '<': signed/unsigned mismatch
+﻿  DeliveryOptimizer.cpp
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\DeliveryOptimizer.cpp(34,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\DeliveryOptimizer.cpp(42,42): warning C4305: 'initializing': truncation from '__int64' to 'int'
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\DeliveryOptimizer.cpp(42,29): warning C4309: 'initializing': truncation of constant value
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\DeliveryOptimizer.cpp(43,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\DeliveryOptimizer.cpp(48,45): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\DeliveryOptimizer.cpp(59,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\DeliveryOptimizer.cpp(64,46): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\DeliveryOptimizer.cpp(80,20): warning C4018: '<': signed/unsigned mismatch
+  PointToPointRouter.cpp
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(140,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(180,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(133,90): warning C4244: 'argument': conversion from 'double' to 'const unsigned int', possible loss of data
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(127): message : while compiling class template member function 'void ExpandableHashMap<GeoCoord,GeoCoord>::associate(const KeyType &,const ValueType &)'
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(127): message :         with
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(127): message :         [
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(127): message :             KeyType=GeoCoord,
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(127): message :             ValueType=GeoCoord
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\ExpandableHashMap.h(127): message :         ]
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(130): message : see reference to function template instantiation 'void ExpandableHashMap<GeoCoord,GeoCoord>::associate(const KeyType &,const ValueType &)' being compiled
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(130): message :         with
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(130): message :         [
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(130): message :             KeyType=GeoCoord,
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(130): message :             ValueType=GeoCoord
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(130): message :         ]
+C:\Users\Solomon Lo\source\repos\Project4_Draft2\Project4_Draft2\PointToPointRouter.cpp(125): message : see reference to class template instantiation 'ExpandableHashMap<GeoCoord,GeoCoord>' being compiled
   Project4_Draft2.vcxproj -> C:\Users\Solomon Lo\source\repos\Project4_Draft2\Debug\Project4_Draft2.exe
